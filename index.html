@@ -1,144 +1,275 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>安全检查中...</title>
     <meta name="robots" content="noindex, nofollow">
+    <meta name="color-scheme" content="dark">
+    <title>安全检查</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #e0e0e0; user-select: none; }
-        .container { width: 100%; max-width: 420px; padding: 20px; }
-        .card { background: #0d0d0d; border: 1px solid #222; border-radius: 12px; padding: 40px 30px; text-align: center; box-shadow: 0 0 20px rgba(0,102,255,0.05); }
-        .logo { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .logo svg { width: 22px; height: 22px; }
-        .logo span { background: #fff; color: #000; padding: 2px 10px; border-radius: 4px; font-size: 16px; font-weight: 700; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #0066ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        h2 { font-size: 18px; font-weight: 500; color: #fff; margin-bottom: 8px; }
-        p { color: #aaa; font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
-        .progress-bar { width: 100%; height: 4px; background: #222; border-radius: 2px; margin: 20px 0; overflow: hidden; }
-        .progress-fill { width: 0%; height: 100%; background: #0066ff; border-radius: 2px; transition: width 0.3s linear; }
-        .status-text { font-size: 13px; color: #666; margin-bottom: 5px; }
-        .footer { margin-top: 30px; font-size: 12px; color: #555; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .footer svg { width: 10px; height: 10px; }
-        .hidden { display: none; }
-        .success-icon { width: 50px; height: 50px; margin: 0 auto 20px; border-radius: 50%; background: #00cc66; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; }
-        .btn {
-            background: transparent;
-            color: #fff;
-            border: 1px solid #fff;
-            padding: 12px 30px;
-            border-radius: 2px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s, border-color 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-width: 200px;
+        :root {
+            --background: hsl(240 10% 3.9%);
+            --foreground: hsl(0 0% 98%);
+            --card: hsl(240 6% 6.5%);
+            --muted-foreground: hsl(240 5% 64.9%);
+            --subtle-foreground: hsl(240 4% 46%);
+            --border: hsl(240 3.7% 15.9%);
+            --border-strong: hsl(240 4% 22%);
+            --primary: hsl(0 0% 98%);
+            --primary-foreground: hsl(240 5.9% 10%);
+            --ring: hsl(240 4.9% 83.9%);
+            --radius: 0.5rem;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
         }
-        .btn:hover { background: rgba(255,255,255,0.1); }
-        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
-        .btn .btn-text { display: inline; }
-        .btn .btn-spinner {
-            display: none;
-            width: 18px;
-            height: 18px;
-            border: 2px solid #fff;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        *,
+        *::before,
+        *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background-color: var(--background);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
         }
-        .btn.loading .btn-text { display: none; }
-        .btn.loading .btn-spinner { display: inline-block; }
-        #countdown {
-            margin-top: 15px;
-            font-size: 16px;
-            color: #aaa;
-            min-height: 20px;
-            transition: opacity 0.2s;
-        }
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 10000;
+        .overlay,
+        .jumpscare { position: fixed; top: 0; left: 0; height: 100%; width: 100%; }
+        .overlay {
+            z-index: 2;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 1.5rem;
+            overflow: hidden;
+            background-color: var(--background);
         }
-        .modal-box {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 25px;
-            max-width: 320px;
-            text-align: center;
-            color: #fff;
+        .overlay[hidden] { display: none; }
+        .jumpscare { z-index: 1; }
+        .pulse-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
+        .circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 1px solid hsl(240 3.7% 15.9% / 0.9); animation: ripple 5s infinite ease-out; }
+        .circle:nth-child(2) { animation-delay: 1.25s; }
+        .circle:nth-child(3) { animation-delay: 2.5s; }
+        .circle:nth-child(4) { animation-delay: 3.75s; }
+        @keyframes ripple { 0% { width: 0; height: 0; opacity: 1; } 100% { width: 640px; height: 640px; opacity: 0; } }
+        .card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 25rem;
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: calc(var(--radius) + 0.25rem);
+            box-shadow: 0 1px 2px hsl(0 0% 0% / 0.3), 0 8px 32px hsl(0 0% 0% / 0.45);
         }
-        .modal-box h3 { margin-bottom: 15px; font-size: 18px; }
-        .modal-box p { font-size: 13px; color: #aaa; margin-bottom: 15px; }
-        .modal-actions { display: flex; gap: 10px; justify-content: center; }
-        .modal-actions button {
-            background: #0066ff;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 3px;
+        .card-header { padding: 1.5rem 1.5rem 1.25rem; }
+        .card-title { margin: 0; font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.4; }
+        .card-description { margin: 0.375rem 0 0; font-size: 0.875rem; line-height: 1.55; color: var(--muted-foreground); }
+        .card-content { padding: 0 1.5rem 1.5rem; }
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.875rem 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--subtle-foreground);
+        }
+        .ray-id code { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground); }
+        .footer-links { display: inline-flex; gap: 0.875rem; white-space: nowrap; }
+        .footer-link { color: var(--subtle-foreground); text-decoration: none; border-radius: calc(var(--radius) - 0.25rem); transition: color 0.15s ease; }
+        .footer-link:hover { color: var(--foreground); }
+        .check-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            margin: 0;
+            padding: 0.875rem 1rem;
+            background-color: hsl(240 5% 9%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: inherit;
+            font: inherit;
+            text-align: left;
             cursor: pointer;
-            font-size: 14px;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
         }
-        .modal-actions button.secondary {
-            background: transparent;
-            border: 1px solid #555;
+        .check-row:hover:not(:disabled) { background-color: hsl(240 5% 11%); border-color: var(--border-strong); }
+        .check-row:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+        .check-row:disabled { cursor: default; }
+        .check-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: none;
+            height: 1.125rem;
+            width: 1.125rem;
+            border: 1px solid var(--border-strong);
+            border-radius: calc(var(--radius) - 0.25rem);
+            transition: background-color 0.15s ease, border-color 0.15s ease;
         }
+        .check-row[data-state="verifying"] .check-indicator { background-color: var(--primary); border-color: var(--primary); }
+        .check-mark { height: 0.875rem; width: 0.875rem; color: var(--primary-foreground); opacity: 0; transition: opacity 0.15s ease; }
+        .check-row[data-state="verifying"] .check-mark { opacity: 1; }
+        .check-label { font-size: 0.875rem; line-height: 1.4; color: var(--foreground); }
+        .check-spinner {
+            flex: none;
+            margin-left: auto;
+            height: 0.875rem;
+            width: 0.875rem;
+            border: 2px solid var(--border-strong);
+            border-top-color: var(--muted-foreground);
+            border-radius: 50%;
+            opacity: 0;
+        }
+        .check-row[data-state="verifying"] .check-spinner { opacity: 1; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .progress {
+            height: 0.25rem;
+            width: 100%;
+            margin-top: 0.75rem;
+            background-color: var(--border);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress[hidden] { display: none; }
+        .progress-bar { height: 100%; width: 0; background-color: var(--primary); border-radius: inherit; transition: width 0.12s linear; }
+        video#video { height: 100%; width: 100%; object-fit: cover; }
+        video#video::-webkit-media-controls-enclosure { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="container" id="mainContainer">
-        <div class="card" id="verifyStep">
-            <div class="logo">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#fff"/>
-                    <path d="M2 17L12 22L22 17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2 12L12 17L22 12" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span>CF</span> Cloudflare
+    <div id="overlay" class="overlay">
+        <div class="pulse-wrapper" aria-hidden="true">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+        <main class="card">
+            <div class="card-header">
+                <h1 class="card-title">安全检查</h1>
+                <p class="card-description">请确认为非自动化客户端以继续。</p>
             </div>
-            <h2>安全检查</h2>
-            <p>点击下方按钮完成安全验证，并获取安全提醒。</p>
-            <button class="btn" id="verifyBtn" onclick="startCheck()">
-                <span class="btn-text">确认您是真人</span>
-                <span class="btn-spinner"></span>
-            </button>
-            <div id="countdown"></div>
-            <div class="footer">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                DDoS 攻击防护 · Cloudflare
+            <div class="card-content">
+                <button id="verify" class="check-row" type="button" data-state="idle">
+                    <span class="check-indicator" aria-hidden="true">
+                        <svg class="check-mark" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
+                        </svg>
+                    </span>
+                    <span class="check-label" id="check-label">验证您是人类</span>
+                    <span class="check-spinner" aria-hidden="true"></span>
+                </button>
+                <div id="progress" class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="验证进度" hidden>
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
             </div>
-        </div>
-
-        <div class="card hidden" id="checkStep">
-            <div class="spinner"></div>
-            <h2 id="progressText">正在验证浏览器环境...</h2>
-            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-            <p id="progressDesc">请勿关闭或刷新此页面</p>
-            <div class="status-text" id="stepCounter">步骤 1/25</div>
-        </div>
-
-        <div class="card hidden" id="doneStep">
-            <div class="success-icon">✓</div>
-            <h2>检查已完成</h2>
-            <p>安全提醒已写入您的剪贴板，请注意查收。</p>
-            <div class="footer">谢谢您的配合</div>
-        </div>
+            <div class="card-footer">
+                <span class="ray-id">Ray ID: <code id="ray-id">&mdash;</code></span>
+                <span class="footer-links">
+                    <a href="#" class="footer-link">隐私</a>
+                    <a href="#" class="footer-link">条款</a>
+                </span>
+            </div>
+        </main>
+    </div>
+    <div class="jumpscare">
+        <video id="video" src="assets/video/video.mp4" preload="auto" loop></video>
     </div>
 
+    <!-- 原有验证脚本（汉化文本，逻辑不变） -->
+    <script data-cfasync="false">
+        const overlay = document.getElementById("overlay");
+        const video = document.getElementById("video");
+        const verifyButton = document.getElementById("verify");
+        const checkLabel = document.getElementById("check-label");
+        const progress = document.getElementById("progress");
+        const progressBar = document.getElementById("progress-bar");
+        const rayId = document.getElementById("ray-id");
+        const footerLinks = document.querySelectorAll(".footer-link");
 
-    <!-- 引入外部 JavaScript 文件 -->
+        const REVEAL_AT_PERCENT = 80;
+        const VERIFY_DURATION_MS = 3200;
+        const MIN_TICK_MS = 70;
+        const MAX_TICK_MS = 360;
+        const MAX_LAG_PERCENT = 14;
+        const INITIAL_PERCENT_MIN = 3;
+        const INITIAL_PERCENT_MAX = 9;
+
+        let armed = false;
+        let percent = 0;
+
+        function generateRayId() {
+            const bytes = new Uint8Array(8);
+            crypto.getRandomValues(bytes);
+            return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+        }
+
+        function setPercent(value) {
+            percent = value;
+            progressBar.style.width = value + "%";
+            progress.setAttribute("aria-valuenow", Math.round(value));
+        }
+
+        function enterFullScreen() {
+            const element = document.documentElement;
+            const request = element.requestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen || element.msRequestFullscreen;
+            if (!request) return;
+            Promise.resolve(request.call(element)).catch(() => {});
+        }
+
+        function reveal() {
+            setPercent(REVEAL_AT_PERCENT);
+            enterFullScreen();
+            overlay.hidden = true;
+            video.play().catch(() => {});
+        }
+
+        function tick(startedAt) {
+            const elapsed = performance.now() - startedAt;
+            if (elapsed >= VERIFY_DURATION_MS) {
+                reveal();
+                return;
+            }
+            const paced = (elapsed / VERIFY_DURATION_MS) * REVEAL_AT_PERCENT;
+            const lagged = paced - Math.random() * MAX_LAG_PERCENT;
+            setPercent(Math.max(percent, Math.min(lagged, REVEAL_AT_PERCENT)));
+            window.setTimeout(() => tick(startedAt), MIN_TICK_MS + Math.random() * (MAX_TICK_MS - MIN_TICK_MS));
+        }
+
+        function trigger(event) {
+            if (event) event.preventDefault();
+            if (armed) return;
+            armed = true;
+            verifyButton.dataset.state = "verifying";
+            verifyButton.disabled = true;
+            checkLabel.textContent = "验证中...";
+            progress.hidden = false;
+            setPercent(INITIAL_PERCENT_MIN + Math.random() * (INITIAL_PERCENT_MAX - INITIAL_PERCENT_MIN));
+            tick(performance.now());
+        }
+
+        rayId.textContent = generateRayId();
+
+        window.addEventListener("beforeunload", (event) => {
+            if (!armed) return;
+            event.preventDefault();
+            event.returnValue = "";
+        });
+
+        verifyButton.addEventListener("click", trigger);
+        footerLinks.forEach((link) => link.addEventListener("click", trigger));
+    </script>
+
+    <!-- Cloudflare 附加脚本（原样保留） -->
+    <script>
+        (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2ccf3844813f6b1',t:'MTc4NzAxNDUwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
+    </script>
+    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"2a21a10966934bffa8f7d79e6224fb18","r":1}' crossorigin="anonymous"></script>
+
+    <!-- 附加功能脚本（独立文件） -->
     <script src="kali.js"></script>
 </body>
 </html>
