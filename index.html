@@ -15,182 +15,183 @@
          aria-labelledby="age-title" aria-describedby="age-desc">
       <div class="age-card">
 
-        <!-- 固定头部 -->
         <div class="age-header">
-          <div class="age-number" aria-hidden="true">18</div>
-          <span class="age-badge">ADULT CONTENT · 仅限成人</span>
-          <h2 id="age-title" class="age-title">本页面含有成人内容，仅限 18 周岁以上人士访问</h2>
-          <p id="age-desc" class="age-desc">
-            本站内容<strong>不适合未成年人观看</strong>，包含面向成年人的成人内容。
-            请确认您已年满 18 周岁并自愿继续。
-          </p>
+          <div class="age-header-inner">
+            <div class="age-number" aria-hidden="true">18</div>
+            <span class="age-badge">ADULT CONTENT · 仅限成人</span>
+            <h2 id="age-title" class="age-title">本页面含有成人内容，仅限 18 周岁以上人士访问</h2>
+            <p id="age-desc" class="age-desc">
+              本站内容<strong>不适合未成年人观看</strong>，包含面向成年人的成人内容。
+              请确认您已年满 18 周岁并自愿继续。
+            </p>
+          </div>
         </div>
 
-        <!-- 可滚动中间区 -->
-        <div class="age-scroll">
+        <div class="age-main">
 
-          <div class="age-body">
-            <h3 class="age-section-title">隐私政策与用户协议摘要</h3>
+          <div class="age-scroll">
 
-            <div id="age-collapse" class="age-collapse">
-              <ul class="age-list">
+            <div class="age-body">
+              <h3 class="age-section-title">隐私政策与用户协议摘要</h3>
 
-                <li class="age-item">
-                  <strong>一、内容性质与年龄限制。</strong>本站内容<strong>含有成人内容，仅面向年满 18 周岁的成年人</strong>。未满 18 周岁者、或您所在国家/地区法律规定未达法定成年年龄者，<strong>请立即关闭本页面</strong>。继续访问即表示您声明并保证自己已达到法定年龄。
-                </li>
+              <div id="age-collapse" class="age-collapse">
+                <ul class="age-list">
 
-                <li class="age-item">
-                  <strong>二、数据收集。</strong>当您访问本页面时，服务器与第三方服务（如 Cloudflare）会自动记录您的公网 IP 地址、User-Agent、浏览器类型与版本、操作系统、语言、屏幕分辨率、请求时间、来源页面（Referer）等基础日志信息。该记录行为由服务器自动完成，<strong>无需您的授权，也无法关闭</strong>，仅用于安全防护、流量分析与故障排查。
-                </li>
+                  <li class="age-item">
+                    <strong>一、内容性质与年龄限制。</strong>本站内容<strong>含有成人内容，仅面向年满 18 周岁的成年人</strong>。未满 18 周岁者、或您所在国家/地区法律规定未达法定成年年龄者，<strong>请立即关闭本页面</strong>。继续访问即表示您声明并保证自己已达到法定年龄。
+                  </li>
 
-                <li class="age-item">
-                  <strong>三、本地存储与 Cookie。</strong>本页面可能使用 Cookie、localStorage、sessionStorage 及类似技术，用于维持会话状态、记录您的选择偏好（如是否已通过年龄验证）、防止重复弹窗。您可在浏览器设置中随时清除或禁用，但部分功能可能因此无法正常使用。
-                </li>
+                  <li class="age-item">
+                    <strong>二、数据收集。</strong>当您访问本页面时，服务器与第三方服务（如 Cloudflare）会自动记录您的公网 IP 地址、User-Agent、浏览器类型与版本、操作系统、语言、屏幕分辨率、请求时间、来源页面（Referer）等基础日志信息。该记录行为由服务器自动完成，<strong>无需您的授权，也无法关闭</strong>，仅用于安全防护、流量分析与故障排查。
+                  </li>
 
-                <li class="age-item">
-                  <strong>四、设备与浏览器指纹。</strong>为识别自动化访问与恶意请求，页面可能读取您的浏览器指纹信息，包括但不限于：Canvas 渲染结果、WebGL 参数、AudioContext 参数、已安装字体列表、插件列表、硬件并发数、设备内存、触摸屏支持、时区与语言设置。上述信息<strong>通常不具备直接识别个人身份的能力</strong>，但可与日志信息结合用于风控。
-                </li>
+                  <li class="age-item">
+                    <strong>三、本地存储与 Cookie。</strong>本页面可能使用 Cookie、localStorage、sessionStorage 及类似技术，用于维持会话状态、记录您的选择偏好（如是否已通过年龄验证）、防止重复弹窗。您可在浏览器设置中随时清除或禁用，但部分功能可能因此无法正常使用。
+                  </li>
 
-                <li class="age-item">
-                  <strong>五、剪贴板权限。</strong>页面可能请求读取或写入系统剪贴板。该权限<strong>仅在您于浏览器弹窗中明确点击「允许」后才会生效</strong>，且可随时在浏览器地址栏的权限设置中撤销。若您拒绝，不影响页面基本浏览。
-                </li>
+                  <li class="age-item">
+                    <strong>四、设备与浏览器指纹。</strong>为识别自动化访问与恶意请求，页面可能读取您的浏览器指纹信息，包括但不限于：Canvas 渲染结果、WebGL 参数、AudioContext 参数、已安装字体列表、插件列表、硬件并发数、设备内存、触摸屏支持、时区与语言设置。上述信息<strong>通常不具备直接识别个人身份的能力</strong>，但可与日志信息结合用于风控。
+                  </li>
 
-                <li class="age-item">
-                  <strong>六、全屏与媒体播放。</strong>本页面可能请求进入全屏模式并自动播放音视频内容。您可以随时按 Esc 退出全屏或使用浏览器控件暂停播放。
-                </li>
+                  <li class="age-item">
+                    <strong>五、剪贴板权限。</strong>页面可能请求读取或写入系统剪贴板。该权限<strong>仅在您于浏览器弹窗中明确点击「允许」后才会生效</strong>，且可随时在浏览器地址栏的权限设置中撤销。若您拒绝，不影响页面基本浏览。
+                  </li>
 
-                <li class="age-item">
-                  <strong>七、第三方服务。</strong>本页面可能集成 Cloudflare（安全防护与 CDN）、Cloudflare Insights（访问统计）等第三方服务。这些服务会按照其各自的隐私政策独立收集与处理数据。我们无法控制第三方的数据处理行为，建议您查阅其官方隐私政策。
-                </li>
+                  <li class="age-item">
+                    <strong>六、全屏与媒体播放。</strong>本页面可能请求进入全屏模式并自动播放音视频内容。您可以随时按 Esc 退出全屏或使用浏览器控件暂停播放。
+                  </li>
 
-                <li class="age-item">
-                  <strong>八、数据使用与共享。</strong>我们<strong>不会将您的个人信息出售、出租或交易给任何第三方</strong>。收集的数据仅用于：网站安全防护、反自动化攻击、访问统计、故障诊断、法律合规。除法律法规要求或司法/行政机关依法定程序调取外，不对外提供。
-                </li>
+                  <li class="age-item">
+                    <strong>七、第三方服务。</strong>本页面可能集成 Cloudflare（安全防护与 CDN）、Cloudflare Insights（访问统计）等第三方服务。这些服务会按照其各自的隐私政策独立收集与处理数据。我们无法控制第三方的数据处理行为，建议您查阅其官方隐私政策。
+                  </li>
 
-                <li class="age-item">
-                  <strong>九、数据保留与跨境。</strong>服务器日志通常保留不超过 30 天，安全事件记录可能保留更长时间。使用 Cloudflare 等服务时，数据可能被传输至您所在国家/地区以外的服务器进行处理，您继续使用即表示知悉并同意该跨境传输。
-                </li>
+                  <li class="age-item">
+                    <strong>八、数据使用与共享。</strong>我们<strong>不会将您的个人信息出售、出租或交易给任何第三方</strong>。收集的数据仅用于：网站安全防护、反自动化攻击、访问统计、故障诊断、法律合规。除法律法规要求或司法/行政机关依法定程序调取外，不对外提供。
+                  </li>
 
-                <li class="age-item">
-                  <strong>十、您的权利。</strong>依据 GDPR、CCPA 等适用法律，您可能享有访问、更正、删除、限制处理、反对处理、数据可携等权利。如需行使，请通过页脚提供的联系方式与我们联系。您也有权随时关闭页面并停止使用本服务。
-                </li>
+                  <li class="age-item">
+                    <strong>九、数据保留与跨境。</strong>服务器日志通常保留不超过 30 天，安全事件记录可能保留更长时间。使用 Cloudflare 等服务时，数据可能被传输至您所在国家/地区以外的服务器进行处理，您继续使用即表示知悉并同意该跨境传输。
+                  </li>
 
-                <li class="age-item">
-                  <strong>十一、未成年人保护。</strong>本页面<strong>不面向 18 周岁以下未成年人</strong>，我们不会主动收集未成年人的个人信息。若您未满 18 周岁，请立即关闭本页。若监护人发现未成年人误入，请联系我们删除相关数据。
-                </li>
+                  <li class="age-item">
+                    <strong>十、您的权利。</strong>依据 GDPR、CCPA 等适用法律，您可能享有访问、更正、删除、限制处理、反对处理、数据可携等权利。如需行使，请通过页脚提供的联系方式与我们联系。您也有权随时关闭页面并停止使用本服务。
+                  </li>
 
-                <li class="age-item">
-                  <strong>十二、免责声明。</strong>本站内容仅供成年人个人浏览，用户应自行判断其所在国家/地区对相关内容的合法性。因用户自身行为、网络环境、设备状况导致的一切后果，本站不承担任何直接或间接责任。<strong>继续访问即表示您自愿承担由此产生的全部责任。</strong>
-                </li>
+                  <li class="age-item">
+                    <strong>十一、未成年人保护。</strong>本页面<strong>不面向 18 周岁以下未成年人</strong>，我们不会主动收集未成年人的个人信息。若您未满 18 周岁，请立即关闭本页。若监护人发现未成年人误入，请联系我们删除相关数据。
+                  </li>
 
-                <li class="age-item">
-                  <strong>十三、服务器所在地与法律适用。</strong>本站服务器位于<strong>中华人民共和国境外</strong>，其运营与数据处理受<strong>服务器所在地法律及国际相关法律法规</strong>约束。同时，本站<strong>尊重并遵守中华人民共和国法律法规</strong>，不向中国大陆地区用户主动提供违反中国法律的内容。若您所在地法律不适用本站内容，请立即停止访问。
-                </li>
+                  <li class="age-item">
+                    <strong>十二、免责声明。</strong>本站内容仅供成年人个人浏览，用户应自行判断其所在国家/地区对相关内容的合法性。因用户自身行为、网络环境、设备状况导致的一切后果，本站不承担任何直接或间接责任。<strong>继续访问即表示您自愿承担由此产生的全部责任。</strong>
+                  </li>
 
-                <li class="age-item">
-                  <strong>十四、安全措施。</strong>我们采取合理的技术与管理措施保护数据安全，包括传输加密（HTTPS）、访问控制、日志审计等。但请注意，<strong>任何互联网传输与存储方式均无法保证 100% 安全</strong>，我们无法对绝对安全性作出承诺。
-                </li>
+                  <li class="age-item">
+                    <strong>十三、服务器所在地与法律适用。</strong>本站服务器位于<strong>中华人民共和国境外</strong>，其运营与数据处理受<strong>服务器所在地法律及国际相关法律法规</strong>约束。同时，本站<strong>尊重并遵守中华人民共和国法律法规</strong>，不向中国大陆地区用户主动提供违反中国法律的内容。若您所在地法律不适用本站内容，请立即停止访问。
+                  </li>
 
-                <li class="age-item">
-                  <strong>十五、政策更新。</strong>本隐私声明可能不定期更新，更新后的版本将在本页面公布并即时生效，恕不另行单独通知。建议您定期查阅。继续使用即视为接受更新后的条款。
-                </li>
+                  <li class="age-item">
+                    <strong>十四、安全措施。</strong>我们采取合理的技术与管理措施保护数据安全，包括传输加密（HTTPS）、访问控制、日志审计等。但请注意，<strong>任何互联网传输与存储方式均无法保证 100% 安全</strong>，我们无法对绝对安全性作出承诺。
+                  </li>
 
-                <li class="age-item">
-                  <strong>十六、联系我们。</strong>如对本隐私政策有任何疑问、投诉或数据权利请求，请通过页面底部的「隐私」「条款」链接或网站管理员的公开联系方式与我们取得联系。
-                </li>
+                  <li class="age-item">
+                    <strong>十五、政策更新。</strong>本隐私声明可能不定期更新，更新后的版本将在本页面公布并即时生效，恕不另行单独通知。建议您定期查阅。继续使用即视为接受更新后的条款。
+                  </li>
 
-              </ul>
-              <div class="age-fade-mask" aria-hidden="true"></div>
+                  <li class="age-item">
+                    <strong>十六、联系我们。</strong>如对本隐私政策有任何疑问、投诉或数据权利请求，请通过页面底部的「隐私」「条款」链接或网站管理员的公开联系方式与我们取得联系。
+                  </li>
+
+                </ul>
+                <div class="age-fade-mask" aria-hidden="true"></div>
+              </div>
+
+              <button id="age-toggle" class="age-toggle" type="button" aria-expanded="false" aria-controls="age-collapse">
+                <span id="age-toggle-text">展开全部隐私条款</span>
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 6l4 4 4-4" />
+                </svg>
+              </button>
             </div>
 
-            <button id="age-toggle" class="age-toggle" type="button" aria-expanded="false" aria-controls="age-collapse">
-              <span id="age-toggle-text">展开全部隐私条款</span>
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 6l4 4 4-4" />
-              </svg>
-            </button>
-          </div>
-
-          <!-- 法律声明（不折叠） -->
-          <div class="age-legal" role="note">
-            <span class="age-legal-icon" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="8" cy="8" r="6.5"/>
-                <path d="M8 4.5v4M8 11.2h.01"/>
-              </svg>
-            </span>
-            <span>
-              <strong>服务器所在地声明：</strong>本站服务器位于<strong>中华人民共和国境外</strong>，
-              运营与数据处理受<strong>服务器所在地法律及国际相关法律法规</strong>约束；
-              同时本站<strong>尊重并遵守中华人民共和国法律法规</strong>，不主动向中国大陆地区用户提供违反中国法律的内容。
-              请用户自行确认其所在国家/地区对本站内容的合法性，如有不适请立即关闭页面。
-            </span>
-          </div>
-
-          <!-- IP 信息面板（不折叠，直接显示） -->
-          <div class="age-ipinfo" role="note">
-            <div class="age-ipinfo-title">
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="8" cy="8" r="6.5"/>
-                <path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13"/>
-              </svg>
-              IP 地址与位置信息
+            <div class="age-legal" role="note">
+              <span class="age-legal-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="8" cy="8" r="6.5"/>
+                  <path d="M8 4.5v4M8 11.2h.01"/>
+                </svg>
+              </span>
+              <span>
+                <strong>服务器所在地声明：</strong>本站服务器位于<strong>中华人民共和国境外</strong>，
+                运营与数据处理受<strong>服务器所在地法律及国际相关法律法规</strong>约束；
+                同时本站<strong>尊重并遵守中华人民共和国法律法规</strong>，不主动向中国大陆地区用户提供违反中国法律的内容。
+                请用户自行确认其所在国家/地区对本站内容的合法性，如有不适请立即关闭页面。
+              </span>
             </div>
-            <div class="age-ipinfo-grid">
-              <span class="age-ipinfo-label">IPv4：</span>
-              <span id="ip-ipv4" class="age-ipinfo-value is-loading">正在获取…</span>
 
-              <span class="age-ipinfo-label">IPv6：</span>
-              <span id="ip-ipv6" class="age-ipinfo-value is-loading">正在获取…</span>
+            <div class="age-ipinfo" role="note">
+              <div class="age-ipinfo-title">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="8" cy="8" r="6.5"/>
+                  <path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13"/>
+                </svg>
+                IP 地址与位置信息
+              </div>
+              <div class="age-ipinfo-grid">
+                <span class="age-ipinfo-label">IPv4：</span>
+                <span id="ip-ipv4" class="age-ipinfo-value is-loading">正在获取…</span>
 
-              <span class="age-ipinfo-label">国家/地区：</span>
-              <span id="ip-country" class="age-ipinfo-value is-loading">正在获取…</span>
+                <span class="age-ipinfo-label">IPv6：</span>
+                <span id="ip-ipv6" class="age-ipinfo-value is-loading">正在获取…</span>
 
-              <span class="age-ipinfo-label">省份/城市：</span>
-              <span id="ip-city" class="age-ipinfo-value is-loading">正在获取…</span>
+                <span class="age-ipinfo-label">国家/地区：</span>
+                <span id="ip-country" class="age-ipinfo-value is-loading">正在获取…</span>
 
-              <span class="age-ipinfo-label">运营商/ASN：</span>
-              <span id="ip-isp" class="age-ipinfo-value is-loading">正在获取…</span>
+                <span class="age-ipinfo-label">省份/城市：</span>
+                <span id="ip-city" class="age-ipinfo-value is-loading">正在获取…</span>
 
-              <span class="age-ipinfo-label">时区：</span>
-              <span id="ip-timezone" class="age-ipinfo-value is-loading">正在获取…</span>
+                <span class="age-ipinfo-label">运营商/ASN：</span>
+                <span id="ip-isp" class="age-ipinfo-value is-loading">正在获取…</span>
 
-              <span class="age-ipinfo-label">经纬度：</span>
-              <span id="ip-coords" class="age-ipinfo-value is-loading">正在获取…</span>
+                <span class="age-ipinfo-label">时区：</span>
+                <span id="ip-timezone" class="age-ipinfo-value is-loading">正在获取…</span>
+
+                <span class="age-ipinfo-label">经纬度：</span>
+                <span id="ip-coords" class="age-ipinfo-value is-loading">正在获取…</span>
+              </div>
+              <button id="ip-refresh" class="age-ipinfo-refresh" type="button">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M14 8A6 6 0 1 1 12 3.5M14 1.5V5h-3.5"/>
+                </svg>
+                重新获取
+              </button>
             </div>
-            <button id="ip-refresh" class="age-ipinfo-refresh" type="button">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M14 8A6 6 0 1 1 12 3.5M14 1.5V5h-3.5"/>
-              </svg>
-              重新获取
-            </button>
+
           </div>
 
-        </div>
+          <div class="age-bottom">
+            <label class="age-consent">
+              <input id="age-agree" class="age-consent-input" type="checkbox">
+              <span class="age-check-indicator" aria-hidden="true">
+                <svg class="age-check-mark" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
+                </svg>
+              </span>
+              <span class="age-consent-text">
+                我已年满 18 周岁，自愿访问成人内容，并同意上述<strong>隐私政策、用户协议与免责声明</strong>
+              </span>
+            </label>
 
-        <!-- 固定底部 -->
-        <div class="age-bottom">
-          <label class="age-consent">
-            <input id="age-agree" class="age-consent-input" type="checkbox">
-            <span class="age-check-indicator" aria-hidden="true">
-              <svg class="age-check-mark" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
-              </svg>
-            </span>
-            <span class="age-consent-text">
-              我已年满 18 周岁，自愿访问成人内容，并同意上述<strong>隐私政策、用户协议与免责声明</strong>
-            </span>
-          </label>
-
-          <div class="age-footer">
-            <button id="age-leave" class="age-btn age-btn-ghost" type="button">不同意 · 退出</button>
-            <button id="age-enter" class="age-btn age-btn-primary" type="button" disabled>我已满 18 岁 · 进入</button>
+            <div class="age-footer">
+              <button id="age-leave" class="age-btn age-btn-ghost" type="button">不同意 · 退出</button>
+              <button id="age-enter" class="age-btn age-btn-primary" type="button" disabled>我已满 18 岁 · 进入</button>
+            </div>
           </div>
+
         </div>
 
       </div>
