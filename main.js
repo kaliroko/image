@@ -399,7 +399,7 @@ footerLinks.forEach(function (link) {
     var toggleBtn  = document.getElementById("age-toggle");
     var toggleText = document.getElementById("age-toggle-text");
 
-    var COLLAPSED_HEIGHT = "4rem";
+    var COLLAPSED_HEIGHT = "5.5rem";
     var isOpen = false;
 
     function applyCollapse() {
