@@ -146,6 +146,62 @@ footerLinks.forEach(function (link) {
 
 
 /* ============================================================
+   屏幕方向自适应：横屏 / 竖屏
+   ============================================================ */
+(function () {
+    "use strict";
+
+    var gate = document.getElementById("age-gate");
+    if (!gate) return;
+
+    var lastOrientation = null;
+
+    function detectOrientation() {
+        var w = window.innerWidth  || document.documentElement.clientWidth  || screen.width;
+        var h = window.innerHeight || document.documentElement.clientHeight || screen.height;
+
+        var orientation = (w > h) ? "landscape" : "portrait";
+
+        if (orientation === lastOrientation) return;
+        lastOrientation = orientation;
+
+        if (orientation === "landscape") {
+            gate.classList.add("is-landscape");
+            gate.classList.remove("is-portrait");
+        } else {
+            gate.classList.add("is-portrait");
+            gate.classList.remove("is-landscape");
+        }
+
+        var collapse = document.getElementById("age-collapse");
+        if (collapse && collapse.classList.contains("is-open")) {
+            collapse.style.maxHeight = "none";
+        }
+    }
+
+    detectOrientation();
+
+    var raf = null;
+    function onResize() {
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function () {
+            detectOrientation();
+        });
+    }
+
+    window.addEventListener("resize", onResize, { passive: true });
+    window.addEventListener("orientationchange", function () {
+        setTimeout(detectOrientation, 100);
+        setTimeout(detectOrientation, 350);
+    });
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", onResize);
+    }
+})();
+
+
+/* ============================================================
    IP 地址与地理位置获取
    ============================================================ */
 (function () {
