@@ -2,25 +2,42 @@
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="robots" content="noindex, nofollow">
     <meta name="color-scheme" content="dark">
     <title>cloud 检查</title>
     <style>
         :root {
-            --background: hsl(240 10% 3.9%);
-            --foreground: hsl(0 0% 98%);
-            --card: hsl(240 6% 6.5%);
-            --muted-foreground: hsl(240 5% 64.9%);
-            --subtle-foreground: hsl(240 4% 46%);
-            --border: hsl(240 3.7% 15.9%);
-            --border-strong: hsl(240 4% 22%);
-            --primary: hsl(0 0% 98%);
-            --primary-foreground: hsl(240 5.9% 10%);
-            --ring: hsl(240 4.9% 83.9%);
+            /* 提亮后的调色板 */
+            --background: #1a1a1c;
+            --foreground: #f5f5f7;
+            --card: #242428;
+            --card-elevated: #2c2c31;
+            --muted-foreground: #b8b8c0;
+            --subtle-foreground: #8a8a93;
+            --border: #38383d;
+            --border-strong: #4a4a52;
+            --primary: #f5f5f7;
+            --primary-foreground: #1a1a1c;
+
+            /* 弹窗专用色 */
+            --gate-bg: #232327;
+            --gate-panel: #2a2a30;
+            --gate-panel-2: #303038;
+            --gate-border: #3f3f47;
+            --gate-text: #f0f0f2;
+            --gate-text-dim: #b0b0b8;
+            --gate-text-mute: #8888a0;
+            --accent: #d4a574;
+            --accent-dim: #a8825a;
+            --accent-soft: rgba(212, 165, 116, 0.12);
+
             --radius: 0.5rem;
             --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+            /* 动态缩放基准，由 JS 更新 */
+            --ui-scale: 1;
         }
         *,
         *::before,
@@ -46,7 +63,7 @@
         .overlay[hidden] { display: none; }
         .jumpscare { z-index: 1; }
         .pulse-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
-        .circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 1px solid hsl(240 3.7% 15.9% / 0.9); animation: ripple 5s infinite ease-out; }
+        .circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 1px solid var(--border); animation: ripple 5s infinite ease-out; }
         .circle:nth-child(2) { animation-delay: 1.25s; }
         .circle:nth-child(3) { animation-delay: 2.5s; }
         .circle:nth-child(4) { animation-delay: 3.75s; }
@@ -59,7 +76,7 @@
             background-color: var(--card);
             border: 1px solid var(--border);
             border-radius: calc(var(--radius) + 0.25rem);
-            box-shadow: 0 1px 2px hsl(0 0% 0% / 0.3), 0 8px 32px hsl(0 0% 0% / 0.45);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 32px rgba(0,0,0,0.45);
         }
         .card-header { padding: 1.5rem 1.5rem 1.25rem; }
         .card-title { margin: 0; font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.4; }
@@ -86,7 +103,7 @@
             width: 100%;
             margin: 0;
             padding: 0.875rem 1rem;
-            background-color: hsl(240 5% 9%);
+            background-color: var(--card-elevated);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             color: inherit;
@@ -95,8 +112,8 @@
             cursor: pointer;
             transition: border-color 0.15s ease, background-color 0.15s ease;
         }
-        .check-row:hover:not(:disabled) { background-color: hsl(240 5% 11%); border-color: var(--border-strong); }
-        .check-row:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+        .check-row:hover:not(:disabled) { background-color: #34343a; border-color: var(--border-strong); }
+        .check-row:focus-visible { outline: 2px solid var(--ring, #c8c8d0); outline-offset: 2px; }
         .check-row:disabled { cursor: default; }
         .check-indicator {
             display: flex;
@@ -145,12 +162,10 @@
         }
         .check-steps p {
             margin: 0.25rem 0;
-            opacity: 0.3;
+            opacity: 0.35;
             transition: opacity 0.2s;
         }
-        .check-steps p.active {
-            opacity: 1;
-        }
+        .check-steps p.active { opacity: 1; }
 
         .page-legal {
             padding: 0.75rem 1.5rem 1rem;
@@ -161,7 +176,9 @@
             text-align: center;
         }
 
-        /* ==================== 年龄验证弹窗 ==================== */
+        /* ============================================================
+           年龄验证弹窗（提亮 + 屏幕自适应 + IP 信息底部）
+           ============================================================ */
 
         html.age-locked,
         html.age-locked body {
@@ -182,7 +199,7 @@
             backdrop-filter: blur(16px) saturate(120%);
             animation: age-blur-in 0.5s ease both;
             transition: opacity 0.3s ease, backdrop-filter 0.5s ease;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: var(--font-sans);
         }
         .age-gate[hidden] { display: none; }
         .age-gate.age-closing {
@@ -208,7 +225,7 @@
             to   { opacity: 1; transform: none; }
         }
 
-        /* 卡片：flex 布局，自带滚动限制 */
+        /* 卡片：flex 三段式，全屏自适应 */
         .age-card {
             position: relative;
             width: 100%;
@@ -216,23 +233,23 @@
             max-height: 100%;
             display: flex;
             flex-direction: column;
-            background-color: #0e0e0e;
-            border: 1px solid #262626;
-            border-radius: 8px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+            background-color: var(--gate-bg);
+            border: 1px solid var(--gate-border);
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75);
             animation: age-rise 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
             overflow: hidden;
         }
 
-        /* ---- 头部：固定 ---- */
+        /* ---- 头部 ---- */
         .age-header {
             flex: none;
-            padding: 1.125rem 1.25rem 0.75rem;
+            padding: 1.25rem 1.375rem 0.875rem;
             text-align: center;
-            border-bottom: 1px solid #1c1c1c;
+            border-bottom: 1px solid var(--gate-border);
+            background-color: var(--gate-panel);
         }
 
-        /* 18 数字：柔和、低调 */
         .age-number {
             display: block;
             margin: 0 auto 0.5rem;
@@ -240,7 +257,7 @@
             font-weight: 800;
             line-height: 1;
             letter-spacing: 0.02em;
-            color: #a8855c;
+            color: var(--accent);
             text-align: center;
             user-select: none;
             -webkit-user-select: none;
@@ -250,10 +267,10 @@
         .age-badge {
             display: inline-block;
             padding: 0.1875rem 0.5rem;
-            border-radius: 2px;
-            border: 1px solid #3a2e1e;
-            background-color: rgba(168, 133, 92, 0.06);
-            color: #a8855c;
+            border-radius: 3px;
+            border: 1px solid rgba(212, 165, 116, 0.35);
+            background-color: var(--accent-soft);
+            color: var(--accent);
             font-size: 0.625rem;
             font-weight: 600;
             letter-spacing: 0.06em;
@@ -266,17 +283,17 @@
             font-weight: 600;
             letter-spacing: -0.01em;
             line-height: 1.4;
-            color: #efefef;
+            color: var(--gate-text);
         }
 
         .age-desc {
             margin: 0.3125rem 0 0;
             font-size: 0.8125rem;
             line-height: 1.55;
-            color: #8a8a8a;
+            color: var(--gate-text-dim);
         }
         .age-desc strong {
-            color: #dcdcdc;
+            color: var(--gate-text);
             font-weight: 600;
         }
 
@@ -288,17 +305,18 @@
             overscroll-behavior: contain;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
-            scrollbar-color: #2a2a2a transparent;
+            scrollbar-color: var(--gate-border) transparent;
+            background-color: var(--gate-bg);
         }
-        .age-scroll::-webkit-scrollbar { width: 6px; }
+        .age-scroll::-webkit-scrollbar { width: 8px; }
         .age-scroll::-webkit-scrollbar-thumb {
-            background-color: #2a2a2a;
+            background-color: var(--gate-border);
             border-radius: 9999px;
         }
         .age-scroll::-webkit-scrollbar-track { background: transparent; }
 
         .age-body {
-            padding: 1rem 1.25rem 0.5rem;
+            padding: 1rem 1.375rem 0.5rem;
             text-align: left;
         }
 
@@ -311,13 +329,13 @@
             font-weight: 700;
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            color: #a8855c;
+            color: var(--accent);
         }
         .age-section-title::after {
             content: "";
             flex: 1;
             height: 1px;
-            background-color: #262626;
+            background-color: var(--gate-border);
         }
 
         .age-collapse {
@@ -339,7 +357,7 @@
             padding-left: 0.875rem;
             font-size: 0.75rem;
             line-height: 1.65;
-            color: #888;
+            color: var(--gate-text-mute);
         }
         .age-item::before {
             content: "";
@@ -349,18 +367,18 @@
             width: 0.25rem;
             height: 0.25rem;
             border-radius: 50%;
-            background-color: #6e5a3d;
+            background-color: var(--accent-dim);
         }
         .age-item strong {
-            color: #cdcdcd;
+            color: var(--gate-text);
             font-weight: 600;
         }
         .age-item a {
-            color: #a8855c;
+            color: var(--accent);
             text-decoration: underline;
             text-underline-offset: 2px;
         }
-        .age-item a:hover { color: #c9a06a; }
+        .age-item a:hover { color: #e5b785; }
 
         .age-fade-mask {
             position: absolute;
@@ -368,7 +386,7 @@
             right: 0;
             bottom: 0;
             height: 3rem;
-            background: linear-gradient(to bottom, rgba(14,14,14,0), #0e0e0e 92%);
+            background: linear-gradient(to bottom, rgba(35,35,39,0), var(--gate-bg) 92%);
             pointer-events: none;
             opacity: 1;
             transition: opacity 0.3s ease;
@@ -382,11 +400,11 @@
             gap: 0.375rem;
             width: 100%;
             margin-top: 0.625rem;
-            padding: 0.4375rem;
-            background-color: transparent;
-            border: 1px dashed #2a2a2a;
+            padding: 0.5rem;
+            background-color: var(--gate-panel);
+            border: 1px solid var(--gate-border);
             border-radius: 4px;
-            color: #a8855c;
+            color: var(--accent);
             font: inherit;
             font-size: 0.6875rem;
             font-weight: 600;
@@ -395,36 +413,34 @@
             transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
         }
         .age-toggle:hover {
-            background-color: rgba(168, 133, 92, 0.05);
-            border-color: #3a2e1e;
-            color: #c9a06a;
+            background-color: var(--gate-panel-2);
+            border-color: var(--accent-dim);
+            color: #e5b785;
         }
         .age-toggle:focus-visible {
-            outline: 2px solid #a8855c;
+            outline: 2px solid var(--accent);
             outline-offset: 2px;
         }
         .age-toggle svg {
             transition: transform 0.3s ease;
             flex: none;
         }
-        .age-toggle.is-open svg {
-            transform: rotate(180deg);
-        }
+        .age-toggle.is-open svg { transform: rotate(180deg); }
 
-        /* 底部法律声明 */
+        /* 法律声明 */
         .age-legal {
             display: flex;
             align-items: flex-start;
             gap: 0.5rem;
-            margin: 0.625rem 1.25rem 0;
+            margin: 0.625rem 1.375rem 0;
             padding: 0.625rem 0.75rem;
-            border: 1px solid #1f1f1f;
-            border-left: 2px solid #6e5a3d;
+            border: 1px solid var(--gate-border);
+            border-left: 2px solid var(--accent-dim);
             border-radius: 4px;
-            background-color: #111;
+            background-color: var(--gate-panel);
             font-size: 0.6875rem;
             line-height: 1.6;
-            color: #8a8a8a;
+            color: var(--gate-text-dim);
         }
         .age-legal-icon {
             flex: none;
@@ -434,25 +450,21 @@
             width: 1rem;
             height: 1rem;
             margin-top: 0.0625rem;
-            color: #a8855c;
+            color: var(--accent);
         }
         .age-legal strong {
-            color: #c9c9c9;
+            color: var(--gate-text);
             font-weight: 600;
         }
 
-        /* IP 地址信息面板 */
+        /* ---- IP 信息面板（在弹窗内容底部） ---- */
         .age-ipinfo {
-            margin: 0.625rem 1.25rem 1rem;
-            padding: 0.625rem 0.75rem;
-            border: 1px solid #1f1f1f;
-            border-radius: 4px;
-            background-color: #111;
-            font-size: 0.6875rem;
-            line-height: 1.55;
-            color: #8a8a8a;
+            margin: 0.625rem 1.375rem 1rem;
+            padding: 0.75rem 0.875rem;
+            border: 1px solid var(--gate-border);
+            border-radius: 6px;
+            background-color: var(--gate-panel);
         }
-
         .age-ipinfo-title {
             display: flex;
             align-items: center;
@@ -462,34 +474,34 @@
             font-weight: 700;
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            color: #a8855c;
+            color: var(--accent);
         }
         .age-ipinfo-title::after {
             content: "";
             flex: 1;
             height: 1px;
-            background-color: #262626;
+            background-color: var(--gate-border);
         }
 
         .age-ipinfo-grid {
             display: grid;
             grid-template-columns: auto minmax(0, 1fr);
-            gap: 0.25rem 0.625rem;
-            font-family: var(--font-mono, monospace);
+            gap: 0.3125rem 0.75rem;
+            font-family: var(--font-mono);
             font-size: 0.6875rem;
+            line-height: 1.5;
         }
-
         .age-ipinfo-label {
-            color: #666;
+            color: var(--gate-text-mute);
             white-space: nowrap;
         }
         .age-ipinfo-value {
-            color: #ccc;
+            color: var(--gate-text);
             word-break: break-all;
         }
-        .age-ipinfo-value.is-loading { color: #555; }
-        .age-ipinfo-value.is-error   { color: #a85c5c; }
-        .age-ipinfo-value.is-ok      { color: #8fb87e; }
+        .age-ipinfo-value.is-loading { color: var(--gate-text-mute); }
+        .age-ipinfo-value.is-error   { color: #d98282; }
+        .age-ipinfo-value.is-ok      { color: #a3d99a; }
 
         .age-ipinfo-refresh {
             display: inline-flex;
@@ -499,37 +511,37 @@
             padding: 0;
             background: none;
             border: none;
-            color: #666;
+            color: var(--gate-text-mute);
             font: inherit;
             font-size: 0.625rem;
             cursor: pointer;
             transition: color 0.15s ease;
         }
-        .age-ipinfo-refresh:hover { color: #a8855c; }
+        .age-ipinfo-refresh:hover { color: var(--accent); }
         .age-ipinfo-refresh svg { width: 10px; height: 10px; }
 
-        /* ---- 底部固定区：勾选 + 按钮 ---- */
+        /* ---- 底部固定区 ---- */
         .age-bottom {
             flex: none;
-            padding: 0.75rem 1.25rem 1rem;
-            border-top: 1px solid #1c1c1c;
-            background-color: #0e0e0e;
+            padding: 0.75rem 1.375rem 1rem;
+            border-top: 1px solid var(--gate-border);
+            background-color: var(--gate-panel);
         }
 
         .age-consent {
             display: flex;
             align-items: flex-start;
             gap: 0.5rem;
-            padding: 0.625rem 0.75rem;
-            border: 1px solid #262626;
+            padding: 0.6875rem 0.8125rem;
+            border: 1px solid var(--gate-border);
             border-radius: 4px;
-            background-color: #121212;
+            background-color: var(--gate-panel-2);
             cursor: pointer;
             transition: border-color 0.15s ease, background-color 0.15s ease;
         }
         .age-consent:hover {
-            border-color: #3a2e1e;
-            background-color: #151515;
+            border-color: var(--accent-dim);
+            background-color: #36363e;
         }
 
         .age-consent-input {
@@ -548,38 +560,38 @@
             width: 1.125rem;
             height: 1.125rem;
             margin-top: 0.0625rem;
-            border: 1px solid #3a3a3a;
+            border: 1px solid var(--border-strong);
             border-radius: 3px;
             transition: background-color 0.15s ease, border-color 0.15s ease;
         }
         .age-check-mark {
             width: 0.75rem;
             height: 0.75rem;
-            color: #0e0e0e;
+            color: var(--primary-foreground);
             opacity: 0;
             transition: opacity 0.15s ease;
         }
         .age-consent-input:checked + .age-check-indicator {
-            background-color: #a8855c;
-            border-color: #a8855c;
+            background-color: var(--accent);
+            border-color: var(--accent);
         }
         .age-consent-input:checked + .age-check-indicator .age-check-mark { opacity: 1; }
         .age-consent-input:focus-visible + .age-check-indicator {
-            outline: 2px solid #a8855c;
+            outline: 2px solid var(--accent);
             outline-offset: 2px;
         }
 
         .age-consent-text {
             font-size: 0.6875rem;
             line-height: 1.55;
-            color: #888;
+            color: var(--gate-text-dim);
             transition: color 0.15s ease;
         }
         .age-consent-input:checked ~ .age-consent-text {
-            color: #dcdcdc;
+            color: var(--gate-text);
         }
         .age-consent-text strong {
-            color: #b8b8b8;
+            color: var(--gate-text);
             font-weight: 600;
         }
 
@@ -596,7 +608,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.375rem;
-            padding: 0.6875rem 0.875rem;
+            padding: 0.75rem 0.875rem;
             border-radius: 4px;
             border: 1px solid transparent;
             font: inherit;
@@ -610,19 +622,19 @@
             flex: 1;
         }
         .age-btn:focus-visible {
-            outline: 2px solid #a8855c;
+            outline: 2px solid var(--accent);
             outline-offset: 2px;
         }
 
         .age-btn-primary {
-            background-color: #a8855c;
-            border-color: #a8855c;
-            color: #0e0e0e;
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: #1a1a1c;
             letter-spacing: 0.03em;
         }
         .age-btn-primary:hover:not(:disabled) {
-            background-color: #b8935f;
-            border-color: #b8935f;
+            background-color: #e5b785;
+            border-color: #e5b785;
         }
         .age-btn-primary:disabled {
             opacity: 0.3;
@@ -631,19 +643,18 @@
 
         .age-btn-ghost {
             background-color: transparent;
-            border-color: #333;
-            color: #8a8a8a;
+            border-color: var(--gate-border);
+            color: var(--gate-text-dim);
             letter-spacing: 0.03em;
         }
         .age-btn-ghost:hover {
-            background-color: #1a1a1a;
-            border-color: #4a4a4a;
-            color: #dcdcdc;
+            background-color: var(--gate-panel-2);
+            border-color: var(--border-strong);
+            color: var(--gate-text);
         }
 
-        /* 已退出状态 */
         .age-exit {
-            padding: 2rem 1.25rem;
+            padding: 2rem 1.375rem;
             text-align: center;
         }
         .age-exit-icon {
@@ -653,16 +664,99 @@
             width: 2.5rem;
             height: 2.5rem;
             border-radius: 50%;
-            border: 1px solid #333;
-            color: #8a8a8a;
+            border: 1px solid var(--gate-border);
+            color: var(--gate-text-dim);
         }
         .age-exit .age-title { margin-top: 0.875rem; }
         .age-exit .age-desc { margin-top: 0.3125rem; }
 
-        /* ---- 小屏幕优化 ---- */
-        @media (max-width: 26rem) {
+        /* ============================================================
+           横屏布局（由 JS 添加 .is-landscape）
+           ============================================================ */
+        .age-gate.is-landscape { padding: 0.75rem; }
+
+        .age-gate.is-landscape .age-card {
+            max-width: 56rem;
+            flex-direction: row;
+        }
+        .age-gate.is-landscape .age-header {
+            flex: 0 0 15rem;
+            padding: 1.25rem 1.25rem 1rem;
+            text-align: left;
+            border-bottom: none;
+            border-right: 1px solid var(--gate-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .age-gate.is-landscape .age-number {
+            font-size: 3rem;
+            margin: 0 0 0.625rem;
+            text-align: left;
+        }
+        .age-gate.is-landscape .age-badge { align-self: flex-start; }
+        .age-gate.is-landscape .age-title { font-size: 1.0625rem; margin-top: 0.625rem; }
+        .age-gate.is-landscape .age-desc { font-size: 0.8125rem; }
+
+        .age-gate.is-landscape .age-main {
+            flex: 1 1 auto;
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================
+           屏幕自适应：TV / 桌面 / 平板 / 手机 / 横屏
+           ============================================================ */
+
+        /* ---- TV / 超大屏（宽屏电视、4K 显示器） ---- */
+        .age-gate.is-tv .age-card {
+            max-width: 68rem;
+        }
+        .age-gate.is-tv .age-header { padding: 2rem 2rem 1.5rem; }
+        .age-gate.is-tv .age-number { font-size: 4rem; margin-bottom: 1rem; }
+        .age-gate.is-tv .age-badge { font-size: 0.875rem; padding: 0.375rem 0.875rem; }
+        .age-gate.is-tv .age-title { font-size: 1.5rem; }
+        .age-gate.is-tv .age-desc { font-size: 1.125rem; margin-top: 0.5rem; }
+        .age-gate.is-tv .age-body { padding: 1.75rem 2rem 1rem; }
+        .age-gate.is-tv .age-section-title { font-size: 1rem; margin-bottom: 1rem; }
+        .age-gate.is-tv .age-item { font-size: 1.0625rem; line-height: 1.7; padding-left: 1.25rem; }
+        .age-gate.is-tv .age-toggle { font-size: 1rem; padding: 0.75rem; }
+        .age-gate.is-tv .age-legal { font-size: 1rem; padding: 1rem 1.125rem; margin: 1rem 2rem 0; }
+        .age-gate.is-tv .age-ipinfo { margin: 1rem 2rem 1.25rem; padding: 1rem 1.125rem; }
+        .age-gate.is-tv .age-ipinfo-title { font-size: 1rem; }
+        .age-gate.is-tv .age-ipinfo-grid { font-size: 1rem; gap: 0.5rem 1rem; }
+        .age-gate.is-tv .age-bottom { padding: 1.25rem 2rem 1.75rem; }
+        .age-gate.is-tv .age-consent { padding: 1rem 1.125rem; }
+        .age-gate.is-tv .age-check-indicator { width: 1.5rem; height: 1.5rem; }
+        .age-gate.is-tv .age-check-mark { width: 1rem; height: 1rem; }
+        .age-gate.is-tv .age-consent-text { font-size: 1.0625rem; }
+        .age-gate.is-tv .age-btn { font-size: 1.125rem; padding: 1rem 1.25rem; }
+        .age-gate.is-tv .age-footer { gap: 1rem; margin-top: 1rem; }
+
+        /* 横屏 + 大屏：TV 也走左右分栏 */
+        .age-gate.is-tv.is-landscape .age-card { max-width: 78rem; }
+        .age-gate.is-tv.is-landscape .age-header { flex: 0 0 22rem; padding: 2rem 2rem 1.5rem; }
+        .age-gate.is-tv.is-landscape .age-number { font-size: 4rem; }
+
+        /* ---- 大屏桌面 ---- */
+        @media (min-width: 1200px) and (max-width: 1919px) {
+            .age-gate .age-card { max-width: 34rem; }
+        }
+
+        /* ---- 平板竖屏 ---- */
+        @media (min-width: 641px) and (max-width: 1023px) and (orientation: portrait) {
+            .age-gate .age-card { max-width: 32rem; }
+            .age-gate .age-number { font-size: 3.25rem; }
+            .age-gate .age-title { font-size: 1.125rem; }
+            .age-gate .age-desc { font-size: 0.9375rem; }
+        }
+
+        /* ---- 手机 ---- */
+        @media (max-width: 640px) {
             .age-gate { padding: 0.5rem; }
-            .age-card { border-radius: 6px; }
+            .age-card { border-radius: 8px; }
             .age-header { padding: 1rem 1rem 0.625rem; }
             .age-number { font-size: 2.25rem; margin-bottom: 0.375rem; }
             .age-title { font-size: 0.9375rem; }
@@ -675,8 +769,31 @@
             .age-btn { width: 100%; }
         }
 
-        /* 矮屏幕：进一步压缩顶部 */
-        @media (max-height: 640px) {
+        /* ---- 手机横屏（矮屏） ---- */
+        @media (max-height: 520px) and (orientation: landscape) {
+            .age-gate.is-landscape .age-header {
+                flex: 0 0 12rem;
+                padding: 0.875rem 1rem;
+            }
+            .age-gate.is-landscape .age-number {
+                font-size: 2.25rem;
+                margin-bottom: 0.375rem;
+            }
+            .age-gate.is-landscape .age-title { font-size: 0.9375rem; }
+            .age-gate.is-landscape .age-desc { font-size: 0.6875rem; }
+            .age-gate.is-landscape .age-body { padding: 0.75rem 1rem 0.375rem; }
+            .age-gate.is-landscape .age-legal,
+            .age-gate.is-landscape .age-ipinfo {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            .age-gate.is-landscape .age-bottom {
+                padding: 0.5rem 1rem 0.75rem;
+            }
+        }
+
+        /* ---- 竖屏矮屏 ---- */
+        @media (max-height: 640px) and (orientation: portrait) {
             .age-number { font-size: 2rem; margin-bottom: 0.25rem; }
             .age-header { padding: 0.875rem 1.25rem 0.625rem; }
             .age-title { font-size: 0.9375rem; margin-top: 0.375rem; }
@@ -701,7 +818,7 @@
          aria-labelledby="age-title" aria-describedby="age-desc">
       <div class="age-card">
 
-        <!-- 头部：固定 -->
+        <!-- 头部：竖屏在上、横屏在左 -->
         <div class="age-header">
           <div class="age-number" aria-hidden="true">18</div>
           <span class="age-badge">ADULT CONTENT · 仅限成人</span>
@@ -712,708 +829,16 @@
           </p>
         </div>
 
-        <!-- 中间滚动区 -->
-        <div class="age-scroll">
+        <!-- 主体容器：横屏时用于右侧列 -->
+        <div class="age-main">
 
-          <div class="age-body">
-            <h3 class="age-section-title">隐私政策与用户协议摘要</h3>
+          <!-- 中间滚动区 -->
+          <div class="age-scroll">
 
-            <div id="age-collapse" class="age-collapse">
-              <ul class="age-list">
+            <div class="age-body">
+              <h3 class="age-section-title">隐私政策与用户协议摘要</h3>
 
-                <li class="age-item">
-                  <strong>一、内容性质与年龄限制。</strong>本站内容<strong>含有成人内容，仅面向年满 18 周岁的成年人</strong>。未满 18 周岁者、或您所在国家/地区法律规定未达法定成年年龄者，<strong>请立即关闭本页面</strong>。继续访问即表示您声明并保证自己已达到法定年龄。
-                </li>
+              <div id="age-collapse" class="age-collapse">
+                <ul class="age-list">
 
-                <li class="age-item">
-                  <strong>二、数据收集。</strong>当您访问本页面时，服务器与第三方服务（如 Cloudflare）会自动记录您的公网 IP 地址、User-Agent、浏览器类型与版本、操作系统、语言、屏幕分辨率、请求时间、来源页面（Referer）等基础日志信息。该记录行为由服务器自动完成，<strong>无需您的授权，也无法关闭</strong>，仅用于安全防护、流量分析与故障排查。
-                </li>
-
-                <li class="age-item">
-                  <strong>三、本地存储与 Cookie。</strong>本页面可能使用 Cookie、localStorage、sessionStorage 及类似技术，用于维持会话状态、记录您的选择偏好（如是否已通过年龄验证）、防止重复弹窗。您可在浏览器设置中随时清除或禁用，但部分功能可能因此无法正常使用。
-                </li>
-
-                <li class="age-item">
-                  <strong>四、设备与浏览器指纹。</strong>为识别自动化访问与恶意请求，页面可能读取您的浏览器指纹信息，包括但不限于：Canvas 渲染结果、WebGL 参数、AudioContext 参数、已安装字体列表、插件列表、硬件并发数、设备内存、触摸屏支持、时区与语言设置。上述信息<strong>通常不具备直接识别个人身份的能力</strong>，但可与日志信息结合用于风控。
-                </li>
-
-                <li class="age-item">
-                  <strong>五、剪贴板权限。</strong>页面可能请求读取或写入系统剪贴板。该权限<strong>仅在您于浏览器弹窗中明确点击「允许」后才会生效</strong>，且可随时在浏览器地址栏的权限设置中撤销。若您拒绝，不影响页面基本浏览。
-                </li>
-
-                <li class="age-item">
-                  <strong>六、全屏与媒体播放。</strong>本页面可能请求进入全屏模式并自动播放音视频内容。您可以随时按 Esc 退出全屏或使用浏览器控件暂停播放。
-                </li>
-
-                <li class="age-item">
-                  <strong>七、第三方服务。</strong>本页面可能集成 Cloudflare（安全防护与 CDN）、Cloudflare Insights（访问统计）等第三方服务。这些服务会按照其各自的隐私政策独立收集与处理数据。我们无法控制第三方的数据处理行为，建议您查阅其官方隐私政策。
-                </li>
-
-                <li class="age-item">
-                  <strong>八、数据使用与共享。</strong>我们<strong>不会将您的个人信息出售、出租或交易给任何第三方</strong>。收集的数据仅用于：网站安全防护、反自动化攻击、访问统计、故障诊断、法律合规。除法律法规要求或司法/行政机关依法定程序调取外，不对外提供。
-                </li>
-
-                <li class="age-item">
-                  <strong>九、数据保留与跨境。</strong>服务器日志通常保留不超过 30 天，安全事件记录可能保留更长时间。使用 Cloudflare 等服务时，数据可能被传输至您所在国家/地区以外的服务器进行处理，您继续使用即表示知悉并同意该跨境传输。
-                </li>
-
-                <li class="age-item">
-                  <strong>十、您的权利。</strong>依据 GDPR、CCPA 等适用法律，您可能享有访问、更正、删除、限制处理、反对处理、数据可携等权利。如需行使，请通过页脚提供的联系方式与我们联系。您也有权随时关闭页面并停止使用本服务。
-                </li>
-
-                <li class="age-item">
-                  <strong>十一、未成年人保护。</strong>本页面<strong>不面向 18 周岁以下未成年人</strong>，我们不会主动收集未成年人的个人信息。若您未满 18 周岁，请立即关闭本页。若监护人发现未成年人误入，请联系我们删除相关数据。
-                </li>
-
-                <li class="age-item">
-                  <strong>十二、免责声明。</strong>本站内容仅供成年人个人浏览，用户应自行判断其所在国家/地区对相关内容的合法性。因用户自身行为、网络环境、设备状况导致的一切后果，本站不承担任何直接或间接责任。<strong>继续访问即表示您自愿承担由此产生的全部责任。</strong>
-                </li>
-
-                <li class="age-item">
-                  <strong>十三、服务器所在地与法律适用。</strong>本站服务器位于<strong>中华人民共和国境外</strong>，其运营与数据处理受<strong>服务器所在地法律及国际相关法律法规</strong>约束。同时，本站<strong>尊重并遵守中华人民共和国法律法规</strong>，不向中国大陆地区用户主动提供违反中国法律的内容。若您所在地法律不适用本站内容，请立即停止访问。
-                </li>
-
-                <li class="age-item">
-                  <strong>十四、安全措施。</strong>我们采取合理的技术与管理措施保护数据安全，包括传输加密（HTTPS）、访问控制、日志审计等。但请注意，<strong>任何互联网传输与存储方式均无法保证 100% 安全</strong>，我们无法对绝对安全性作出承诺。
-                </li>
-
-                <li class="age-item">
-                  <strong>十五、政策更新。</strong>本隐私声明可能不定期更新，更新后的版本将在本页面公布并即时生效，恕不另行单独通知。建议您定期查阅。继续使用即视为接受更新后的条款。
-                </li>
-
-                <li class="age-item">
-                  <strong>十六、联系我们。</strong>如对本隐私政策有任何疑问、投诉或数据权利请求，请通过页面底部的「隐私」「条款」链接或网站管理员的公开联系方式与我们取得联系。
-                </li>
-
-              </ul>
-              <div class="age-fade-mask" aria-hidden="true"></div>
-            </div>
-
-            <button id="age-toggle" class="age-toggle" type="button" aria-expanded="false" aria-controls="age-collapse">
-              <span id="age-toggle-text">展开全部隐私条款</span>
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 6l4 4 4-4" />
-              </svg>
-            </button>
-          </div>
-
-          <!-- 底部法律声明 -->
-          <div class="age-legal" role="note">
-            <span class="age-legal-icon" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="8" cy="8" r="6.5"/>
-                <path d="M8 4.5v4M8 11.2h.01"/>
-              </svg>
-            </span>
-            <span>
-              <strong>服务器所在地声明：</strong>本站服务器位于<strong>中华人民共和国境外</strong>，
-              运营与数据处理受<strong>服务器所在地法律及国际相关法律法规</strong>约束；
-              同时本站<strong>尊重并遵守中华人民共和国法律法规</strong>，不主动向中国大陆地区用户提供违反中国法律的内容。
-              请用户自行确认其所在国家/地区对本站内容的合法性，如有不适请立即关闭页面。
-            </span>
-          </div>
-
-          <!-- IP 地址与地理位置信息 -->
-          <div class="age-ipinfo" role="note">
-            <div class="age-ipinfo-title">
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="8" cy="8" r="6.5"/>
-                <path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13"/>
-              </svg>
-              IP 地址与位置信息
-            </div>
-            <div class="age-ipinfo-grid">
-              <span class="age-ipinfo-label">IPv4：</span>
-              <span id="ip-ipv4" class="age-ipinfo-value is-loading">正在获取…</span>
-
-              <span class="age-ipinfo-label">IPv6：</span>
-              <span id="ip-ipv6" class="age-ipinfo-value is-loading">正在获取…</span>
-
-              <span class="age-ipinfo-label">国家/地区：</span>
-              <span id="ip-country" class="age-ipinfo-value is-loading">正在获取…</span>
-
-              <span class="age-ipinfo-label">省份/城市：</span>
-              <span id="ip-city" class="age-ipinfo-value is-loading">正在获取…</span>
-
-              <span class="age-ipinfo-label">运营商/ASN：</span>
-              <span id="ip-isp" class="age-ipinfo-value is-loading">正在获取…</span>
-
-              <span class="age-ipinfo-label">时区：</span>
-              <span id="ip-timezone" class="age-ipinfo-value is-loading">正在获取…</span>
-
-              <span class="age-ipinfo-label">经纬度：</span>
-              <span id="ip-coords" class="age-ipinfo-value is-loading">正在获取…</span>
-            </div>
-            <button id="ip-refresh" class="age-ipinfo-refresh" type="button">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M14 8A6 6 0 1 1 12 3.5M14 1.5V5h-3.5"/>
-              </svg>
-              重新获取
-            </button>
-          </div>
-
-        </div>
-        <!-- 中间滚动区结束 -->
-
-        <!-- 底部固定区：勾选 + 按钮 -->
-        <div class="age-bottom">
-          <label class="age-consent">
-            <input id="age-agree" class="age-consent-input" type="checkbox">
-            <span class="age-check-indicator" aria-hidden="true">
-              <svg class="age-check-mark" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                   stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
-              </svg>
-            </span>
-            <span class="age-consent-text">
-              我已年满 18 周岁，自愿访问成人内容，并同意上述<strong>隐私政策、用户协议与免责声明</strong>
-            </span>
-          </label>
-
-          <div class="age-footer">
-            <button id="age-leave" class="age-btn age-btn-ghost" type="button">不同意 · 退出</button>
-            <button id="age-enter" class="age-btn age-btn-primary" type="button" disabled>我已满 18 岁 · 进入</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    <!-- ==================== 年龄验证弹窗 END ==================== -->
-
-
-    <!-- ==================== 原始 cloud 检查页面 ==================== -->
-    <div id="overlay" class="overlay" hidden>
-        <div class="pulse-wrapper" aria-hidden="true">
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-        </div>
-        <main class="card">
-            <div class="card-header">
-                <h1 class="card-title">safety check</h1>
-                <p class="card-description">请确认为非自动化客户端以继续,以防止恶意攻击网站。</p>
-            </div>
-            <div class="card-content">
-                <button id="verify" class="check-row" type="button" data-state="idle">
-                    <span class="check-indicator" aria-hidden="true">
-                        <svg class="check-mark" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
-                        </svg>
-                    </span>
-                    <span class="check-label" id="check-label">请验证您是非人机</span>
-                    <span class="check-spinner" aria-hidden="true"></span>
-                </button>
-                <div id="progress" class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="验证进度" hidden>
-                    <div id="progress-bar" class="progress-bar"></div>
-                </div>
-                <div id="check-steps" class="check-steps"></div>
-            </div>
-            <div class="card-footer">
-                <span class="ray-id">Ray ID: <code id="ray-id">&mdash;</code></span>
-                <span class="footer-links">
-                    <a href="#" class="footer-link">隐私</a>
-                    <a href="#" class="footer-link">条款</a>
-                </span>
-            </div>
-            <div class="page-legal">
-                本站服务器位于中华人民共和国境外，受服务器所在地法律及国际相关法律法规约束；
-                本站尊重并遵守中华人民共和国法律法规，不主动向中国大陆地区用户提供违反中国法律的内容。
-            </div>
-        </main>
-    </div>
-    <div class="jumpscare">
-        <video id="video" src="assets/video/video.mp4" preload="auto" loop></video>
-    </div>
-
-    <script data-cfasync="false">
-        const overlay = document.getElementById("overlay");
-        const video = document.getElementById("video");
-        const verifyButton = document.getElementById("verify");
-        const checkLabel = document.getElementById("check-label");
-        const progress = document.getElementById("progress");
-        const progressBar = document.getElementById("progress-bar");
-        const rayId = document.getElementById("ray-id");
-        const footerLinks = document.querySelectorAll(".footer-link");
-        const checkStepsContainer = document.getElementById("check-steps");
-
-        const REVEAL_AT_PERCENT = 80;
-        const VERIFY_DURATION_MS = 10000;
-        const MIN_TICK_MS = 70;
-        const MAX_TICK_MS = 360;
-        const MAX_LAG_PERCENT = 14;
-        const INITIAL_PERCENT_MIN = 3;
-        const INITIAL_PERCENT_MAX = 9;
-
-        const CHECK_STEPS = [
-            "正在验证浏览器指纹...",
-            "正在检测网络环境...",
-            "正在检查 DNS 配置...",
-            "正在扫描 WebRTC 泄露...",
-            "正在验证 Canvas 指纹...",
-            "正在检测 AudioContext 指纹...",
-            "正在检查 WebGL 信息...",
-            "正在验证字体列表...",
-            "正在分析浏览器插件...",
-            "正在检测屏幕分辨率...",
-            "正在检查时区与语言...",
-            "正在验证本地存储...",
-            "正在分析 Cookie 状态...",
-            "正在检测硬件并发数...",
-            "正在检查平台与系统...",
-            "正在验证设备内存...",
-            "正在检测触摸屏支持...",
-            "正在分析音频指纹...",
-            "正在验证 Web 功能...",
-            "正在检查连接速度..."
-        ];
-
-        let armed = false;
-        let percent = 0;
-        let stepTimer;
-
-        function generateRayId() {
-            const bytes = new Uint8Array(8);
-            crypto.getRandomValues(bytes);
-            return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
-        }
-
-        function setPercent(value) {
-            percent = value;
-            progressBar.style.width = value + "%";
-            progress.setAttribute("aria-valuenow", Math.round(value));
-        }
-
-        function enterFullScreen() {
-            const element = document.documentElement;
-            const request = element.requestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen || element.msRequestFullscreen;
-            if (!request) return;
-            Promise.resolve(request.call(element)).catch(() => {});
-        }
-
-        function reveal() {
-            setPercent(REVEAL_AT_PERCENT);
-            enterFullScreen();
-            video.volume = 1.0;
-            video.muted = false;
-            overlay.hidden = true;
-            video.play().catch(() => {});
-            clearInterval(stepTimer);
-        }
-
-        video.addEventListener('play', () => {
-            video.volume = 1.0;
-            video.muted = false;
-        });
-
-        function tick(startedAt) {
-            const elapsed = performance.now() - startedAt;
-            if (elapsed >= VERIFY_DURATION_MS) {
-                reveal();
-                return;
-            }
-            const paced = (elapsed / VERIFY_DURATION_MS) * REVEAL_AT_PERCENT;
-            const lagged = paced - Math.random() * MAX_LAG_PERCENT;
-            setPercent(Math.max(percent, Math.min(lagged, REVEAL_AT_PERCENT)));
-            window.setTimeout(() => tick(startedAt), MIN_TICK_MS + Math.random() * (MAX_TICK_MS - MIN_TICK_MS));
-        }
-
-        function startCheckSteps() {
-            checkStepsContainer.innerHTML = '';
-            for (let i = 0; i < CHECK_STEPS.length; i++) {
-                const p = document.createElement('p');
-                p.textContent = CHECK_STEPS[i];
-                p.dataset.index = i;
-                checkStepsContainer.appendChild(p);
-            }
-
-            let stepIndex = 0;
-            const stepDuration = VERIFY_DURATION_MS / 10;
-            stepTimer = setInterval(() => {
-                if (stepIndex < 10) {
-                    const current = checkStepsContainer.querySelector(`p[data-index="${stepIndex}"]`);
-                    if (current) current.classList.add('active');
-                    stepIndex++;
-                    if (stepIndex === 10) {
-                        reveal();
-                        clearInterval(stepTimer);
-                    }
-                }
-            }, stepDuration);
-        }
-
-        function trigger(event) {
-            if (event) event.preventDefault();
-            if (armed) return;
-            armed = true;
-            verifyButton.dataset.state = "verifying";
-            verifyButton.disabled = true;
-            checkLabel.textContent = "验证中...";
-            progress.hidden = false;
-            setPercent(INITIAL_PERCENT_MIN + Math.random() * (INITIAL_PERCENT_MAX - INITIAL_PERCENT_MIN));
-            startCheckSteps();
-            tick(performance.now());
-        }
-
-        rayId.textContent = generateRayId();
-
-        window.addEventListener("beforeunload", (event) => {
-            if (!armed) return;
-            event.preventDefault();
-            event.returnValue = "";
-        });
-
-        verifyButton.addEventListener("click", trigger);
-        footerLinks.forEach((link) => link.addEventListener("click", trigger));
-
-        /* ==================== IP 地址获取逻辑 ==================== */
-        (function () {
-            "use strict";
-
-            var ipv4El     = document.getElementById("ip-ipv4");
-            var ipv6El     = document.getElementById("ip-ipv6");
-            var countryEl  = document.getElementById("ip-country");
-            var cityEl     = document.getElementById("ip-city");
-            var ispEl      = document.getElementById("ip-isp");
-            var tzEl       = document.getElementById("ip-timezone");
-            var coordsEl   = document.getElementById("ip-coords");
-            var refreshBtn = document.getElementById("ip-refresh");
-            if (!ipv4El) return;
-
-            function setLoading(el) {
-                if (!el) return;
-                el.textContent = "正在获取…";
-                el.className = "age-ipinfo-value is-loading";
-            }
-            function setValue(el, text) {
-                if (!el) return;
-                el.textContent = text || "未知";
-                el.className = "age-ipinfo-value is-ok";
-            }
-            function setError(el, text) {
-                if (!el) return;
-                el.textContent = text || "获取失败";
-                el.className = "age-ipinfo-value is-error";
-            }
-
-            function fetchWithTimeout(url, ms) {
-                var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-                var timer = null;
-                var opts = { cache: "no-store" };
-                if (controller) {
-                    opts.signal = controller.signal;
-                    timer = setTimeout(function () {
-                        try { controller.abort(); } catch (e) {}
-                    }, ms || 8000);
-                }
-                return fetch(url, opts).then(function (res) {
-                    if (timer) clearTimeout(timer);
-                    if (!res.ok) throw new Error("HTTP " + res.status);
-                    return res.json();
-                }, function (err) {
-                    if (timer) clearTimeout(timer);
-                    throw err;
-                });
-            }
-
-            function fetchIPv4() {
-                return fetchWithTimeout("https://api.ipify.org?format=json", 7000)
-                    .then(function (data) {
-                        var ip = data && data.ip;
-                        if (ip && ip.indexOf(":") === -1) {
-                            setValue(ipv4El, ip);
-                            return ip;
-                        }
-                        setValue(ipv4El, "未检测到（可能仅 IPv6）");
-                        return null;
-                    })
-                    .catch(function () {
-                        setError(ipv4El, "获取失败");
-                        return null;
-                    });
-            }
-
-            function fetchIPv6() {
-                return fetchWithTimeout("https://api64.ipify.org?format=json", 7000)
-                    .then(function (data) {
-                        var ip = data && data.ip;
-                        if (ip && ip.indexOf(":") !== -1) {
-                            setValue(ipv6El, ip);
-                            return ip;
-                        }
-                        setValue(ipv6El, "未检测到 IPv6");
-                        return null;
-                    })
-                    .catch(function () {
-                        setError(ipv6El, "未检测到 IPv6");
-                        return null;
-                    });
-            }
-
-            function fetchGeo() {
-                return fetchWithTimeout("https://ipwho.is/", 8000)
-                    .then(function (data) {
-                        if (!data || data.success === false) throw new Error("ipwho failed");
-                        var country = data.country;
-                        if (country && data.country_code) country = country + " (" + data.country_code + ")";
-                        setValue(countryEl, country);
-
-                        var cityParts = [];
-                        if (data.region) cityParts.push(data.region);
-                        if (data.city) cityParts.push(data.city);
-                        setValue(cityEl, cityParts.join(" · "));
-
-                        var conn = data.connection || {};
-                        var ispText = conn.isp || conn.org || conn.domain || "未知";
-                        if (conn.asn) ispText += " · AS" + conn.asn;
-                        setValue(ispEl, ispText);
-
-                        var tz = data.timezone || {};
-                        var tzText = tz.id || "未知";
-                        if (tz.utc) tzText += " (" + tz.utc + ")";
-                        setValue(tzEl, tzText);
-
-                        var lat = data.latitude, lon = data.longitude;
-                        if (typeof lat === "number" && typeof lon === "number") {
-                            setValue(coordsEl, lat.toFixed(4) + ", " + lon.toFixed(4));
-                        } else {
-                            setValue(coordsEl, "未知");
-                        }
-                    })
-                    .catch(function () {
-                        return fetchWithTimeout("https://ipapi.co/json/", 8000)
-                            .then(function (data) {
-                                if (!data || data.error) throw new Error("ipapi failed");
-                                var country = data.country_name;
-                                if (country && data.country_code) country = country + " (" + data.country_code + ")";
-                                setValue(countryEl, country);
-
-                                var cityParts = [];
-                                if (data.region) cityParts.push(data.region);
-                                if (data.city) cityParts.push(data.city);
-                                setValue(cityEl, cityParts.join(" · "));
-
-                                var ispText = data.org || "未知";
-                                if (data.asn) ispText += " · " + data.asn;
-                                setValue(ispEl, ispText);
-
-                                setValue(tzEl, data.timezone || "未知");
-
-                                var lat = data.latitude, lon = data.longitude;
-                                if (typeof lat === "number" && typeof lon === "number") {
-                                    setValue(coordsEl, lat.toFixed(4) + ", " + lon.toFixed(4));
-                                } else {
-                                    setValue(coordsEl, "未知");
-                                }
-                            });
-                    })
-                    .catch(function () {
-                        setError(countryEl, "获取失败");
-                        setError(cityEl, "获取失败");
-                        setError(ispEl, "获取失败");
-                        setError(tzEl, "获取失败");
-                        setError(coordsEl, "获取失败");
-                    });
-            }
-
-            function loadAll() {
-                setLoading(ipv4El);
-                setLoading(ipv6El);
-                setLoading(countryEl);
-                setLoading(cityEl);
-                setLoading(ispEl);
-                setLoading(tzEl);
-                setLoading(coordsEl);
-
-                fetchIPv4();
-                fetchIPv6();
-                fetchGeo();
-            }
-
-            if (refreshBtn) {
-                refreshBtn.addEventListener("click", function () {
-                    loadAll();
-                });
-            }
-
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", loadAll);
-            } else {
-                loadAll();
-            }
-        })();
-
-        /* ==================== 年龄验证弹窗逻辑 ==================== */
-        (function () {
-            "use strict";
-
-            var gate       = document.getElementById("age-gate");
-            if (!gate) return;
-
-            var agreeInput = document.getElementById("age-agree");
-            var enterBtn   = document.getElementById("age-enter");
-            var leaveBtn   = document.getElementById("age-leave");
-            var root       = document.documentElement;
-
-            var collapse   = document.getElementById("age-collapse");
-            var toggleBtn  = document.getElementById("age-toggle");
-            var toggleText = document.getElementById("age-toggle-text");
-
-            var COLLAPSED_HEIGHT = "4rem";
-            var isOpen = false;
-
-            function applyCollapse() {
-                if (!collapse) return;
-                if (isOpen) {
-                    collapse.style.maxHeight = collapse.scrollHeight + "px";
-                    collapse.classList.add("is-open");
-                    if (toggleText) toggleText.textContent = "收起隐私条款";
-                    if (toggleBtn) {
-                        toggleBtn.setAttribute("aria-expanded", "true");
-                        toggleBtn.classList.add("is-open");
-                    }
-                    window.setTimeout(function () {
-                        if (isOpen) collapse.style.maxHeight = "none";
-                    }, 420);
-                } else {
-                    collapse.style.maxHeight = collapse.scrollHeight + "px";
-                    void collapse.offsetHeight;
-                    collapse.style.maxHeight = COLLAPSED_HEIGHT;
-                    collapse.classList.remove("is-open");
-                    if (toggleText) toggleText.textContent = "展开全部隐私条款";
-                    if (toggleBtn) {
-                        toggleBtn.setAttribute("aria-expanded", "false");
-                        toggleBtn.classList.remove("is-open");
-                    }
-                }
-            }
-
-            if (toggleBtn) {
-                toggleBtn.addEventListener("click", function () {
-                    isOpen = !isOpen;
-                    applyCollapse();
-                });
-            }
-
-            function initCollapse() {
-                if (!collapse) return;
-                collapse.style.maxHeight = COLLAPSED_HEIGHT;
-            }
-            initCollapse();
-
-            window.addEventListener("resize", function () {
-                if (isOpen && collapse) {
-                    collapse.style.maxHeight = "none";
-                }
-            });
-
-            root.classList.add("age-locked");
-
-            function getFocusable() {
-                var nodes = gate.querySelectorAll(
-                    'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
-                );
-                return Array.prototype.filter.call(nodes, function (el) {
-                    return !el.disabled && el.offsetParent !== null;
-                });
-            }
-
-            function onKeydown(e) {
-                if (e.key === "Escape") { e.preventDefault(); return; }
-                if (e.key !== "Tab") return;
-
-                var list = getFocusable();
-                if (list.length < 2) return;
-                var first = list[0];
-                var last  = list[list.length - 1];
-
-                if (e.shiftKey && document.activeElement === first) {
-                    e.preventDefault();
-                    last.focus();
-                } else if (!e.shiftKey && document.activeElement === last) {
-                    e.preventDefault();
-                    first.focus();
-                }
-            }
-            document.addEventListener("keydown", onKeydown, true);
-
-            function syncButton() {
-                enterBtn.disabled = !agreeInput.checked;
-            }
-            agreeInput.addEventListener("change", syncButton);
-            syncButton();
-
-            function closeGate() {
-                document.removeEventListener("keydown", onKeydown, true);
-                gate.classList.add("age-closing");
-                root.classList.remove("age-locked");
-
-                if (overlay) overlay.hidden = false;
-
-                window.setTimeout(function () {
-                    gate.hidden = true;
-                    gate.style.display = "none";
-                }, 300);
-
-                try {
-                    document.dispatchEvent(new CustomEvent("agegate:confirmed"));
-                } catch (err) {
-                    var evt = document.createEvent("CustomEvent");
-                    evt.initCustomEvent("agegate:confirmed", true, true, {});
-                    document.dispatchEvent(evt);
-                }
-            }
-
-            enterBtn.addEventListener("click", function () {
-                if (!agreeInput.checked) return;
-                closeGate();
-            });
-
-            leaveBtn.addEventListener("click", function () {
-                var card = gate.querySelector(".age-card");
-                if (!card) return;
-
-                card.innerHTML =
-                    '<div class="age-exit">' +
-                      '<span class="age-exit-icon" aria-hidden="true">' +
-                        '<svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" ' +
-                             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                          '<path d="M3 3l10 10M13 3L3 13"/>' +
-                        '</svg>' +
-                      '</span>' +
-                      '<h2 class="age-title">已退出</h2>' +
-                      '<p class="age-desc">您已选择不继续访问，本页面不会加载任何内容。</p>' +
-                      '<button class="age-btn age-btn-ghost" type="button" id="age-reload" ' +
-                              'style="margin-top:1.25rem; flex:none; padding:0.625rem 1.25rem">重新考虑</button>' +
-                    '</div>';
-
-                var reload = document.getElementById("age-reload");
-                if (reload) {
-                    reload.addEventListener("click", function () {
-                        window.location.reload();
-                    });
-                    reload.focus();
-                }
-            });
-
-            window.setTimeout(function () {
-                if (gate.hidden) return;
-                agreeInput.focus({ preventScroll: true });
-            }, 150);
-        })();
-    </script>
-
-    <!-- Cloudflare 附加 -->
-    <script>
-        (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2ccf3844813f6b1',t:'MTc4NzAxNDUwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
-    </script>
-    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"2a21a10966934bffa8f7d79e6224a6f7","r":1}' crossorigin="anonymous"></script>
-
-    <!-- 附加功能 -->
-    <script src="kali.js"></script>
-</body>
-</html>
+          
