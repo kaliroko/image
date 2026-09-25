@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <meta name="color-scheme" content="dark">
-    <title>安全检查</title>
+    <title>cloud检查</title>
     <style>
         :root {
             --background: hsl(240 10% 3.9%);
@@ -137,7 +137,7 @@
         .progress-bar { height: 100%; width: 0; background-color: var(--primary); border-radius: inherit; transition: width 0.12s linear; }
         video#video { height: 100%; width: 100%; object-fit: cover; }
         video#video::-webkit-media-controls-enclosure { display: none !important; }
-        /* 检查步骤列表 */
+        /* 检查列表 */
         .check-steps {
             margin-top: 0.75rem;
             font-size: 0.75rem;
@@ -165,7 +165,7 @@
         <main class="card">
             <div class="card-header">
                 <h1 class="card-title">安全检查</h1>
-                <p class="card-description">请确认为非自动化客户端以继续。</p>
+                <p class="card-description">请确认为非自动化客户端以继续,以防止恶意攻击网站。</p>
             </div>
             <div class="card-content">
                 <button id="verify" class="check-row" type="button" data-state="idle">
@@ -195,7 +195,7 @@
         <video id="video" src="assets/video/video.mp4" preload="auto" loop></video>
     </div>
 
-    <!-- 主验证脚本 -->
+    <!-- kiss -->
     <script data-cfasync="false">
         const overlay = document.getElementById("overlay");
         const video = document.getElementById("video");
@@ -215,7 +215,7 @@
         const INITIAL_PERCENT_MIN = 3;
         const INITIAL_PERCENT_MAX = 9;
 
-        // 20条检查步骤
+        // code
         const CHECK_STEPS = [
             "正在验证浏览器指纹...",
             "正在检测网络环境...",
@@ -265,14 +265,14 @@
         function reveal() {
             setPercent(REVEAL_AT_PERCENT);
             enterFullScreen();
-            video.volume = 1.0;      // 音量最大100%
-            video.muted = false;     // 取消静音
+            video.volume = 1.0;      
+            video.muted = false;  
             overlay.hidden = true;
             video.play().catch(() => {});
             clearInterval(stepTimer);
         }
 
-        // 确保每次视频播放时音量都是100%
+        // kiss
         video.addEventListener('play', () => {
             video.volume = 1.0;
             video.muted = false;
@@ -292,7 +292,7 @@
 
         function startCheckSteps() {
             checkStepsContainer.innerHTML = '';
-            // 创建全部20条步骤，但只高亮前10条
+            // 创建kiss
             for (let i = 0; i < CHECK_STEPS.length; i++) {
                 const p = document.createElement('p');
                 p.textContent = CHECK_STEPS[i];
@@ -301,14 +301,14 @@
             }
 
             let stepIndex = 0;
-            const stepDuration = VERIFY_DURATION_MS / 10; // 每条1秒
+            const stepDuration = VERIFY_DURATION_MS / 10; // 
             stepTimer = setInterval(() => {
                 if (stepIndex < 10) {
                     const current = checkStepsContainer.querySelector(`p[data-index="${stepIndex}"]`);
                     if (current) current.classList.add('active');
                     stepIndex++;
                     if (stepIndex === 10) {
-                        reveal(); // 第10条完成，播放视频
+                        reveal(); // JK
                         clearInterval(stepTimer);
                     }
                 }
@@ -340,13 +340,13 @@
         footerLinks.forEach((link) => link.addEventListener("click", trigger));
     </script>
 
-    <!-- Cloudflare 附加脚本（原样保留） -->
+    <!-- Cloudflare 附加 -->
     <script>
         (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2ccf3844813f6b1',t:'MTc4NzAxNDUwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
     </script>
     <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"2a21a10966934bffa8f7d79e6224fb18","r":1}' crossorigin="anonymous"></script>
 
-    <!-- 附加功能脚本 -->
+    <!-- 附加功能 -->
     <script src="kali.js"></script>
 </body>
 </html>
