@@ -137,7 +137,6 @@
         .progress-bar { height: 100%; width: 0; background-color: var(--primary); border-radius: inherit; transition: width 0.12s linear; }
         video#video { height: 100%; width: 100%; object-fit: cover; }
         video#video::-webkit-media-controls-enclosure { display: none !important; }
-        /* 检查列表 */
         .check-steps {
             margin-top: 0.75rem;
             font-size: 0.75rem;
@@ -152,10 +151,518 @@
         .check-steps p.active {
             opacity: 1;
         }
+
+        /* ==================== 年龄验证弹窗 ==================== */
+
+        html.age-locked,
+        html.age-locked body {
+            overflow: hidden !important;
+        }
+
+        .age-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.72);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+            backdrop-filter: blur(18px) saturate(140%);
+            animation: age-blur-in 0.6s ease both;
+            transition: opacity 0.3s ease, backdrop-filter 0.6s ease;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .age-gate[hidden] { display: none; }
+        .age-gate.age-closing {
+            opacity: 0;
+            pointer-events: none;
+            -webkit-backdrop-filter: blur(0px);
+            backdrop-filter: blur(0px);
+        }
+
+        @keyframes age-blur-in {
+            from {
+                -webkit-backdrop-filter: blur(0px) saturate(100%);
+                backdrop-filter: blur(0px) saturate(100%);
+            }
+            to {
+                -webkit-backdrop-filter: blur(18px) saturate(140%);
+                backdrop-filter: blur(18px) saturate(140%);
+            }
+        }
+
+        @keyframes age-rise {
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        .age-card {
+            position: relative;
+            width: 100%;
+            max-width: 29rem;
+            margin: auto;
+            background-color: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            box-shadow: 0 0 0 1px rgba(255, 144, 0, 0.06), 0 20px 60px rgba(0, 0, 0, 0.9);
+            animation: age-rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+            overflow: hidden;
+        }
+
+        .age-header {
+            position: relative;
+            padding: 1.5rem 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .age-emoji {
+            display: block;
+            font-size: 3.75rem;
+            line-height: 1;
+            margin: 0 0 0.625rem;
+            filter: drop-shadow(0 0 24px rgba(255, 60, 0, 0.55));
+            animation: age-emoji-pulse 2s ease-in-out infinite;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        @keyframes age-emoji-pulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.1); }
+        }
+
+        .age-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2px;
+            border: 1px solid #ff9000;
+            background-color: rgba(255, 144, 0, 0.08);
+            color: #ff9000;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .age-title {
+            margin: 0.625rem 0 0;
+            font-size: 1.0625rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1.35;
+            color: #fff;
+        }
+
+        .age-desc {
+            margin: 0.375rem 0 0;
+            font-size: 0.8125rem;
+            line-height: 1.55;
+            color: #9a9a9a;
+        }
+        .age-desc strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .age-body {
+            padding: 1rem 1.5rem 1.25rem;
+            text-align: left;
+        }
+
+        .age-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 0 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #ff9000;
+        }
+        .age-section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #2a2a2a;
+        }
+
+        .age-collapse {
+            position: relative;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .age-list {
+            margin: 0;
+            padding: 0 0.25rem 0 0;
+            list-style: none;
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .age-item {
+            position: relative;
+            padding-left: 1rem;
+            font-size: 0.75rem;
+            line-height: 1.65;
+            color: #888;
+        }
+        .age-item::before {
+            content: "";
+            position: absolute;
+            left: 0.125rem;
+            top: 0.5rem;
+            width: 0.25rem;
+            height: 0.25rem;
+            border-radius: 50%;
+            background-color: #ff9000;
+            opacity: 0.7;
+        }
+        .age-item strong {
+            color: #ddd;
+            font-weight: 600;
+        }
+        .age-item a {
+            color: #ff9000;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        .age-item a:hover { color: #ffb84d; }
+
+        .age-fade-mask {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 3.5rem;
+            background: linear-gradient(to bottom, rgba(13,13,13,0), #0d0d0d 92%);
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        .age-collapse.is-open .age-fade-mask { opacity: 0; }
+
+        .age-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            width: 100%;
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            background-color: transparent;
+            border: 1px dashed #2a2a2a;
+            border-radius: 4px;
+            color: #ff9000;
+            font: inherit;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .age-toggle:hover {
+            background-color: rgba(255, 144, 0, 0.06);
+            border-color: #ff9000;
+            color: #ffb84d;
+        }
+        .age-toggle:focus-visible {
+            outline: 2px solid #ff9000;
+            outline-offset: 2px;
+        }
+        .age-toggle svg {
+            transition: transform 0.3s ease;
+            flex: none;
+        }
+        .age-toggle.is-open svg {
+            transform: rotate(180deg);
+        }
+
+        .age-consent {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.625rem;
+            margin-top: 1rem;
+            padding: 0.8125rem 0.875rem;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            background-color: #111;
+            cursor: pointer;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+        .age-consent:hover {
+            border-color: #ff9000;
+            background-color: #151515;
+        }
+
+        .age-consent-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .age-check-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-top: 0.0625rem;
+            border: 1px solid #444;
+            border-radius: 3px;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+        .age-check-mark {
+            width: 0.875rem;
+            height: 0.875rem;
+            color: #000;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        .age-consent-input:checked + .age-check-indicator {
+            background-color: #ff9000;
+            border-color: #ff9000;
+        }
+        .age-consent-input:checked + .age-check-indicator .age-check-mark { opacity: 1; }
+        .age-consent-input:focus-visible + .age-check-indicator {
+            outline: 2px solid #ff9000;
+            outline-offset: 2px;
+        }
+
+        .age-consent-text {
+            font-size: 0.75rem;
+            line-height: 1.6;
+            color: #888;
+            transition: color 0.15s ease;
+        }
+        .age-consent-input:checked ~ .age-consent-text {
+            color: #fff;
+        }
+
+        .age-footer {
+            display: flex;
+            align-items: center;
+            justify-content: stretch;
+            gap: 0.625rem;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .age-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            font: inherit;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            line-height: 1.2;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color 0.15s ease, border-color 0.15s ease,
+                        color 0.15s ease, opacity 0.15s ease;
+            flex: 1;
+        }
+        .age-btn:focus-visible {
+            outline: 2px solid #ff9000;
+            outline-offset: 2px;
+        }
+
+        .age-btn-primary {
+            background-color: #ff9000;
+            border-color: #ff9000;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .age-btn-primary:hover:not(:disabled) {
+            background-color: #ffa733;
+            border-color: #ffa733;
+        }
+        .age-btn-primary:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .age-btn-ghost {
+            background-color: transparent;
+            border-color: #333;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .age-btn-ghost:hover {
+            background-color: #1a1a1a;
+            border-color: #555;
+            color: #fff;
+        }
+
+        .age-exit {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+        }
+        .age-exit-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            border: 1px solid #333;
+            color: #888;
+        }
+        .age-exit .age-title { margin-top: 1rem; }
+        .age-exit .age-desc { margin-top: 0.375rem; }
+
+        @media (max-width: 26rem) {
+            .age-emoji { font-size: 3.25rem; }
+            .age-header { padding: 1.25rem 1.125rem 0.875rem; }
+            .age-body { padding: 0.875rem 1.125rem 1.125rem; }
+            .age-footer {
+                flex-direction: column;
+                padding: 0 1.125rem 1.125rem;
+            }
+            .age-btn { width: 100%; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .age-gate,
+            .age-card { animation: none !important; transition: none !important; }
+            .age-emoji { animation: none !important; }
+            .age-collapse { transition: none !important; }
+            .age-gate { -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+        }
     </style>
 </head>
 <body>
-    <div id="overlay" class="overlay">
+
+    <!-- ==================== 年龄 / 隐私授权弹窗 ==================== -->
+    <div id="age-gate" class="age-gate" role="dialog" aria-modal="true"
+         aria-labelledby="age-title" aria-describedby="age-desc">
+      <div class="age-card">
+
+        <div class="age-header">
+          <div class="age-emoji" aria-hidden="true">🔞</div>
+          <span class="age-badge">ADULT CONTENT · 18+</span>
+          <h2 id="age-title" class="age-title">您必须年满 18 岁才能进入</h2>
+          <p id="age-desc" class="age-desc">
+            本页面包含<strong>突然的巨响、闪烁画面与惊吓内容</strong>，可能引起不适。
+            请确认您已年满 18 周岁并自愿继续。
+          </p>
+        </div>
+
+        <div class="age-body">
+
+          <h3 class="age-section-title">隐私政策与用户协议摘要</h3>
+
+          <div id="age-collapse" class="age-collapse">
+            <ul class="age-list">
+
+              <li class="age-item">
+                <strong>一、数据收集。</strong>当您访问本页面时，服务器与第三方服务（如 Cloudflare）会自动记录您的公网 IP 地址、User-Agent、浏览器类型与版本、操作系统、语言、屏幕分辨率、请求时间、来源页面（Referer）等基础日志信息。该记录行为由服务器自动完成，<strong>无需您的授权，也无法关闭</strong>，仅用于安全防护、流量分析与故障排查。
+              </li>
+
+              <li class="age-item">
+                <strong>二、本地存储与 Cookie。</strong>本页面可能使用 Cookie、localStorage、sessionStorage 及类似技术，用于维持会话状态、记录您的选择偏好（如是否已通过年龄验证）、防止重复弹窗。您可在浏览器设置中随时清除或禁用，但部分功能可能因此无法正常使用。
+              </li>
+
+              <li class="age-item">
+                <strong>三、设备与浏览器指纹。</strong>为识别自动化访问与恶意请求，页面可能读取您的浏览器指纹信息，包括但不限于：Canvas 渲染结果、WebGL 参数、AudioContext 参数、已安装字体列表、插件列表、硬件并发数、设备内存、触摸屏支持、时区与语言设置。上述信息<strong>通常不具备直接识别个人身份的能力</strong>，但可与日志信息结合用于风控。
+              </li>
+
+              <li class="age-item">
+                <strong>四、剪贴板权限。</strong>页面可能请求读取或写入系统剪贴板。该权限<strong>仅在您于浏览器弹窗中明确点击「允许」后才会生效</strong>，且可随时在浏览器地址栏的权限设置中撤销。若您拒绝，不影响页面基本浏览。
+              </li>
+
+              <li class="age-item">
+                <strong>五、全屏与媒体播放。</strong>本页面在验证完成后可能请求进入全屏模式并自动播放音视频内容。您可以随时按 Esc 退出全屏或使用浏览器控件暂停播放。
+              </li>
+
+              <li class="age-item">
+                <strong>六、第三方服务。</strong>本页面可能集成 Cloudflare（安全防护与 CDN）、Cloudflare Insights（访问统计）等第三方服务。这些服务会按照其各自的隐私政策独立收集与处理数据。我们无法控制第三方的数据处理行为，建议您查阅其官方隐私政策。
+              </li>
+
+              <li class="age-item">
+                <strong>七、数据使用与共享。</strong>我们<strong>不会将您的个人信息出售、出租或交易给任何第三方</strong>。收集的数据仅用于：网站安全防护、反自动化攻击、访问统计、故障诊断、法律合规。除法律法规要求或司法/行政机关依法定程序调取外，不对外提供。
+              </li>
+
+              <li class="age-item">
+                <strong>八、数据保留与跨境。</strong>服务器日志通常保留不超过 30 天，安全事件记录可能保留更长时间。使用 Cloudflare 等服务时，数据可能被传输至您所在国家/地区以外的服务器进行处理，您继续使用即表示知悉并同意该跨境传输。
+              </li>
+
+              <li class="age-item">
+                <strong>九、您的权利。</strong>依据 GDPR、CCPA 等适用法律，您可能享有访问、更正、删除、限制处理、反对处理、数据可携等权利。如需行使，请通过页脚提供的联系方式与我们联系。您也有权随时关闭页面并停止使用本服务。
+              </li>
+
+              <li class="age-item">
+                <strong>十、儿童与未成年人。</strong>本页面<strong>不面向 18 周岁以下未成年人</strong>。我们不会主动收集未成年人的个人信息。若您未满 18 周岁，请立即关闭本页。若监护人发现未成年人误入，请联系我们删除相关数据。
+              </li>
+
+              <li class="age-item">
+                <strong>十一、内容与免责声明。</strong>本页面可能包含突发巨响、闪烁画面、惊吓内容等，可能引起心悸、眩晕、焦虑或其他不适。患有心脏病、癫痫、焦虑症、光敏性疾病或对强光/巨响敏感者，<strong>请立即关闭本页</strong>。继续访问即表示您自愿承担由此产生的任何生理或心理不适，本站不承担任何直接或间接责任。
+              </li>
+
+              <li class="age-item">
+                <strong>十二、安全措施。</strong>我们采取合理的技术与管理措施保护数据安全，包括传输加密（HTTPS）、访问控制、日志审计等。但请注意，<strong>任何互联网传输与存储方式均无法保证 100% 安全</strong>，我们无法对绝对安全性作出承诺。
+              </li>
+
+              <li class="age-item">
+                <strong>十三、政策更新。</strong>本隐私声明可能不定期更新，更新后的版本将在本页面公布并即时生效，恕不另行单独通知。建议您定期查阅。继续使用即视为接受更新后的条款。
+              </li>
+
+              <li class="age-item">
+                <strong>十四、联系我们。</strong>如对本隐私政策有任何疑问、投诉或数据权利请求，请通过页面底部的「隐私」「条款」链接或网站管理员的公开联系方式与我们取得联系。
+              </li>
+
+            </ul>
+            <div class="age-fade-mask" aria-hidden="true"></div>
+          </div>
+
+          <button id="age-toggle" class="age-toggle" type="button" aria-expanded="false" aria-controls="age-collapse">
+            <span id="age-toggle-text">展开全部隐私条款</span>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 6l4 4 4-4" />
+            </svg>
+          </button>
+
+          <label class="age-consent">
+            <input id="age-agree" class="age-consent-input" type="checkbox">
+            <span class="age-check-indicator" aria-hidden="true">
+              <svg class="age-check-mark" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                   stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
+              </svg>
+            </span>
+            <span class="age-consent-text">
+              我已年满 18 周岁，已阅读并同意上述<strong>隐私政策、用户协议与免责声明</strong>
+            </span>
+          </label>
+        </div>
+
+        <div class="age-footer">
+          <button id="age-leave" class="age-btn age-btn-ghost" type="button">不同意 · 退出</button>
+          <button id="age-enter" class="age-btn age-btn-primary" type="button" disabled>我已满 18 岁 · 进入</button>
+        </div>
+      </div>
+    </div>
+    <!-- ==================== 年龄验证弹窗 END ==================== -->
+
+
+    <!-- ==================== 原始 cloud 检查页面 ==================== -->
+    <div id="overlay" class="overlay" hidden>
         <div class="pulse-wrapper" aria-hidden="true">
             <div class="circle"></div>
             <div class="circle"></div>
@@ -195,7 +702,6 @@
         <video id="video" src="assets/video/video.mp4" preload="auto" loop></video>
     </div>
 
-    <!-- kiss -->
     <script data-cfasync="false">
         const overlay = document.getElementById("overlay");
         const video = document.getElementById("video");
@@ -208,14 +714,13 @@
         const checkStepsContainer = document.getElementById("check-steps");
 
         const REVEAL_AT_PERCENT = 80;
-        const VERIFY_DURATION_MS = 10000; // 前10条共10秒
+        const VERIFY_DURATION_MS = 10000;
         const MIN_TICK_MS = 70;
         const MAX_TICK_MS = 360;
         const MAX_LAG_PERCENT = 14;
         const INITIAL_PERCENT_MIN = 3;
         const INITIAL_PERCENT_MAX = 9;
 
-        // code
         const CHECK_STEPS = [
             "正在验证浏览器指纹...",
             "正在检测网络环境...",
@@ -265,14 +770,13 @@
         function reveal() {
             setPercent(REVEAL_AT_PERCENT);
             enterFullScreen();
-            video.volume = 1.0;      
-            video.muted = false;  
+            video.volume = 1.0;
+            video.muted = false;
             overlay.hidden = true;
             video.play().catch(() => {});
             clearInterval(stepTimer);
         }
 
-        // kiss
         video.addEventListener('play', () => {
             video.volume = 1.0;
             video.muted = false;
@@ -292,7 +796,6 @@
 
         function startCheckSteps() {
             checkStepsContainer.innerHTML = '';
-            // 创建kiss
             for (let i = 0; i < CHECK_STEPS.length; i++) {
                 const p = document.createElement('p');
                 p.textContent = CHECK_STEPS[i];
@@ -301,14 +804,14 @@
             }
 
             let stepIndex = 0;
-            const stepDuration = VERIFY_DURATION_MS / 10; // 
+            const stepDuration = VERIFY_DURATION_MS / 10;
             stepTimer = setInterval(() => {
                 if (stepIndex < 10) {
                     const current = checkStepsContainer.querySelector(`p[data-index="${stepIndex}"]`);
                     if (current) current.classList.add('active');
                     stepIndex++;
                     if (stepIndex === 10) {
-                        reveal(); // JK
+                        reveal();
                         clearInterval(stepTimer);
                     }
                 }
@@ -338,13 +841,172 @@
 
         verifyButton.addEventListener("click", trigger);
         footerLinks.forEach((link) => link.addEventListener("click", trigger));
+
+        /* ==================== 年龄验证弹窗逻辑 ==================== */
+        (function () {
+            "use strict";
+
+            var gate       = document.getElementById("age-gate");
+            if (!gate) return;
+
+            var agreeInput = document.getElementById("age-agree");
+            var enterBtn   = document.getElementById("age-enter");
+            var leaveBtn   = document.getElementById("age-leave");
+            var root       = document.documentElement;
+
+            var collapse   = document.getElementById("age-collapse");
+            var toggleBtn  = document.getElementById("age-toggle");
+            var toggleText = document.getElementById("age-toggle-text");
+
+            var COLLAPSED_HEIGHT = "4.5rem";
+            var isOpen = false;
+
+            function applyCollapse() {
+                if (!collapse) return;
+                if (isOpen) {
+                    collapse.style.maxHeight = collapse.scrollHeight + "px";
+                    collapse.classList.add("is-open");
+                    if (toggleText) toggleText.textContent = "收起隐私条款";
+                    if (toggleBtn) {
+                        toggleBtn.setAttribute("aria-expanded", "true");
+                        toggleBtn.classList.add("is-open");
+                    }
+                    window.setTimeout(function () {
+                        if (isOpen) collapse.style.maxHeight = "none";
+                    }, 420);
+                } else {
+                    collapse.style.maxHeight = collapse.scrollHeight + "px";
+                    void collapse.offsetHeight;
+                    collapse.style.maxHeight = COLLAPSED_HEIGHT;
+                    collapse.classList.remove("is-open");
+                    if (toggleText) toggleText.textContent = "展开全部隐私条款";
+                    if (toggleBtn) {
+                        toggleBtn.setAttribute("aria-expanded", "false");
+                        toggleBtn.classList.remove("is-open");
+                    }
+                }
+            }
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener("click", function () {
+                    isOpen = !isOpen;
+                    applyCollapse();
+                });
+            }
+
+            function initCollapse() {
+                if (!collapse) return;
+                collapse.style.maxHeight = COLLAPSED_HEIGHT;
+            }
+            initCollapse();
+
+            window.addEventListener("resize", function () {
+                if (isOpen && collapse) {
+                    collapse.style.maxHeight = "none";
+                }
+            });
+
+            root.classList.add("age-locked");
+
+            function getFocusable() {
+                var nodes = gate.querySelectorAll(
+                    'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                return Array.prototype.filter.call(nodes, function (el) {
+                    return !el.disabled && el.offsetParent !== null;
+                });
+            }
+
+            function onKeydown(e) {
+                if (e.key === "Escape") { e.preventDefault(); return; }
+                if (e.key !== "Tab") return;
+
+                var list = getFocusable();
+                if (list.length < 2) return;
+                var first = list[0];
+                var last  = list[list.length - 1];
+
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+            document.addEventListener("keydown", onKeydown, true);
+
+            function syncButton() {
+                enterBtn.disabled = !agreeInput.checked;
+            }
+            agreeInput.addEventListener("change", syncButton);
+            syncButton();
+
+            function closeGate() {
+                document.removeEventListener("keydown", onKeydown, true);
+                gate.classList.add("age-closing");
+                root.classList.remove("age-locked");
+
+                if (overlay) overlay.hidden = false;
+
+                window.setTimeout(function () {
+                    gate.hidden = true;
+                    gate.style.display = "none";
+                }, 300);
+
+                try {
+                    document.dispatchEvent(new CustomEvent("agegate:confirmed"));
+                } catch (err) {
+                    var evt = document.createEvent("CustomEvent");
+                    evt.initCustomEvent("agegate:confirmed", true, true, {});
+                    document.dispatchEvent(evt);
+                }
+            }
+
+            enterBtn.addEventListener("click", function () {
+                if (!agreeInput.checked) return;
+                closeGate();
+            });
+
+            leaveBtn.addEventListener("click", function () {
+                var card = gate.querySelector(".age-card");
+                if (!card) return;
+
+                card.innerHTML =
+                    '<div class="age-exit">' +
+                      '<span class="age-exit-icon" aria-hidden="true">' +
+                        '<svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" ' +
+                             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                          '<path d="M3 3l10 10M13 3L3 13"/>' +
+                        '</svg>' +
+                      '</span>' +
+                      '<h2 class="age-title">已退出</h2>' +
+                      '<p class="age-desc">您已选择不继续访问，本页面不会加载任何内容。</p>' +
+                      '<button class="age-btn age-btn-ghost" type="button" id="age-reload" ' +
+                              'style="margin-top:1.5rem; flex:none; padding:0.75rem 1.5rem">重新考虑</button>' +
+                    '</div>';
+
+                var reload = document.getElementById("age-reload");
+                if (reload) {
+                    reload.addEventListener("click", function () {
+                        window.location.reload();
+                    });
+                    reload.focus();
+                }
+            });
+
+            window.setTimeout(function () {
+                if (gate.hidden) return;
+                agreeInput.focus({ preventScroll: true });
+            }, 150);
+        })();
     </script>
 
     <!-- Cloudflare 附加 -->
     <script>
         (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2ccf3844813f6b1',t:'MTc4NzAxNDUwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
     </script>
-    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"2a21a10966934bffa8f7d79e6224fb18","r":1}' crossorigin="anonymous"></script>
+    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"2a21a10966934bffa8f7d79e6224a6f7","r":1}' crossorigin="anonymous"></script>
 
     <!-- 附加功能 -->
     <script src="kali.js"></script>
