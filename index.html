@@ -219,20 +219,47 @@
             border-bottom: 1px solid #1a1a1a;
         }
 
-        .age-emoji {
-            display: block;
-            font-size: 3.75rem;
+        /* ---- 大号数字「18」图标 ---- */
+        .age-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0.25rem auto 0.875rem;
+            padding: 0.5rem 1.5rem;
+            font-size: 5rem;
+            font-weight: 900;
             line-height: 1;
-            margin: 0 0 0.625rem;
-            filter: drop-shadow(0 0 24px rgba(255, 60, 0, 0.55));
-            animation: age-emoji-pulse 2s ease-in-out infinite;
+            letter-spacing: 0.04em;
+            color: #ff9000;
+            border: 4px solid #ff9000;
+            border-radius: 12px;
+            background-color: rgba(255, 144, 0, 0.06);
+            text-shadow: 0 0 28px rgba(255, 60, 0, 0.7);
+            box-shadow:
+                0 0 0 1px rgba(255, 144, 0, 0.25),
+                0 0 42px rgba(255, 60, 0, 0.45),
+                inset 0 0 24px rgba(255, 60, 0, 0.12);
+            animation: age-number-pulse 2.2s ease-in-out infinite;
             user-select: none;
             -webkit-user-select: none;
+            font-family: "Arial Black", "Helvetica Neue", Impact, sans-serif;
         }
 
-        @keyframes age-emoji-pulse {
-            0%, 100% { transform: scale(1); }
-            50%      { transform: scale(1.1); }
+        @keyframes age-number-pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow:
+                    0 0 0 1px rgba(255, 144, 0, 0.25),
+                    0 0 42px rgba(255, 60, 0, 0.45),
+                    inset 0 0 24px rgba(255, 60, 0, 0.12);
+            }
+            50% {
+                transform: scale(1.04);
+                box-shadow:
+                    0 0 0 1px rgba(255, 144, 0, 0.4),
+                    0 0 62px rgba(255, 60, 0, 0.7),
+                    inset 0 0 30px rgba(255, 60, 0, 0.2);
+            }
         }
 
         .age-badge {
@@ -527,7 +554,7 @@
         .age-exit .age-desc { margin-top: 0.375rem; }
 
         @media (max-width: 26rem) {
-            .age-emoji { font-size: 3.25rem; }
+            .age-number { font-size: 4rem; padding: 0.4rem 1.15rem; border-width: 3px; }
             .age-header { padding: 1.25rem 1.125rem 0.875rem; }
             .age-body { padding: 0.875rem 1.125rem 1.125rem; }
             .age-footer {
@@ -540,7 +567,7 @@
         @media (prefers-reduced-motion: reduce) {
             .age-gate,
             .age-card { animation: none !important; transition: none !important; }
-            .age-emoji { animation: none !important; }
+            .age-number { animation: none !important; }
             .age-collapse { transition: none !important; }
             .age-gate { -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
         }
@@ -554,11 +581,11 @@
       <div class="age-card">
 
         <div class="age-header">
-          <div class="age-emoji" aria-hidden="true">🔞</div>
-          <span class="age-badge">ADULT CONTENT · 18+</span>
-          <h2 id="age-title" class="age-title">您必须年满 18 岁才能进入</h2>
+          <div class="age-number" aria-hidden="true">18+</div>
+          <span class="age-badge">ADULT CONTENT · 仅限成人</span>
+          <h2 id="age-title" class="age-title">本页面含有成人内容且还有部分惊吓内容，仅限 18 周岁以上人士访问</h2>
           <p id="age-desc" class="age-desc">
-            本页面包含<strong>突然的巨响、闪烁画面与惊吓内容</strong>，可能引起不适。
+            本站内容<strong>不适合未成年人，心脏病.癫痫闪烁症观看</strong>包含面向成年人的成人内容。
             请确认您已年满 18 周岁并自愿继续。
           </p>
         </div>
@@ -571,59 +598,63 @@
             <ul class="age-list">
 
               <li class="age-item">
-                <strong>一、数据收集。</strong>当您访问本页面时，服务器与第三方服务（如 Cloudflare）会自动记录您的公网 IP 地址、User-Agent、浏览器类型与版本、操作系统、语言、屏幕分辨率、请求时间、来源页面（Referer）等基础日志信息。该记录行为由服务器自动完成，<strong>无需您的授权，也无法关闭</strong>，仅用于安全防护、流量分析与故障排查。
+                <strong>一、内容性质与年龄限制。</strong>本站内容<strong>含有成人内容，仅面向年满 18 周岁的成年人</strong>。未满 18 周岁者、或您所在国家/地区法律规定未达法定成年年龄者，<strong>请立即关闭本页面</strong>。继续访问即表示您声明并保证自己已达到法定年龄。
               </li>
 
               <li class="age-item">
-                <strong>二、本地存储与 Cookie。</strong>本页面可能使用 Cookie、localStorage、sessionStorage 及类似技术，用于维持会话状态、记录您的选择偏好（如是否已通过年龄验证）、防止重复弹窗。您可在浏览器设置中随时清除或禁用，但部分功能可能因此无法正常使用。
+                <strong>二、数据收集。</strong>当您访问本页面时，服务器与第三方服务（如 Cloudflare）会自动记录您的公网 IP 地址、User-Agent、浏览器类型与版本、操作系统、语言、屏幕分辨率、请求时间、来源页面（Referer）等基础日志信息。该记录行为由服务器自动完成，<strong>无需您的授权，也无法关闭</strong>，仅用于安全防护、流量分析与故障排查。
               </li>
 
               <li class="age-item">
-                <strong>三、设备与浏览器指纹。</strong>为识别自动化访问与恶意请求，页面可能读取您的浏览器指纹信息，包括但不限于：Canvas 渲染结果、WebGL 参数、AudioContext 参数、已安装字体列表、插件列表、硬件并发数、设备内存、触摸屏支持、时区与语言设置。上述信息<strong>通常不具备直接识别个人身份的能力</strong>，但可与日志信息结合用于风控。
+                <strong>三、本地存储与 Cookie。</strong>本页面可能使用 Cookie、localStorage、sessionStorage 及类似技术，用于维持会话状态、记录您的选择偏好（如是否已通过年龄验证）、防止重复弹窗。您可在浏览器设置中随时清除或禁用，但部分功能可能因此无法正常使用。
               </li>
 
               <li class="age-item">
-                <strong>四、剪贴板权限。</strong>页面可能请求读取或写入系统剪贴板。该权限<strong>仅在您于浏览器弹窗中明确点击「允许」后才会生效</strong>，且可随时在浏览器地址栏的权限设置中撤销。若您拒绝，不影响页面基本浏览。
+                <strong>四、设备与浏览器指纹。</strong>为识别自动化访问与恶意请求，页面可能读取您的浏览器指纹信息，包括但不限于：Canvas 渲染结果、WebGL 参数、AudioContext 参数、已安装字体列表、插件列表、硬件并发数、设备内存、触摸屏支持、时区与语言设置。上述信息<strong>通常不具备直接识别个人身份的能力</strong>，但可与日志信息结合用于风控。
               </li>
 
               <li class="age-item">
-                <strong>五、全屏与媒体播放。</strong>本页面在验证完成后可能请求进入全屏模式并自动播放音视频内容。您可以随时按 Esc 退出全屏或使用浏览器控件暂停播放。
+                <strong>五、剪贴板权限。</strong>页面可能请求读取或写入系统剪贴板。该权限<strong>仅在您于浏览器弹窗中明确点击「允许」后才会生效</strong>，且可随时在浏览器地址栏的权限设置中撤销。若您拒绝，不影响页面基本浏览。
               </li>
 
               <li class="age-item">
-                <strong>六、第三方服务。</strong>本页面可能集成 Cloudflare（安全防护与 CDN）、Cloudflare Insights（访问统计）等第三方服务。这些服务会按照其各自的隐私政策独立收集与处理数据。我们无法控制第三方的数据处理行为，建议您查阅其官方隐私政策。
+                <strong>六、全屏与媒体播放。</strong>本页面可能请求进入全屏模式并自动播放音视频内容。您可以随时按 Esc 退出全屏或使用浏览器控件暂停播放。
               </li>
 
               <li class="age-item">
-                <strong>七、数据使用与共享。</strong>我们<strong>不会将您的个人信息出售、出租或交易给任何第三方</strong>。收集的数据仅用于：网站安全防护、反自动化攻击、访问统计、故障诊断、法律合规。除法律法规要求或司法/行政机关依法定程序调取外，不对外提供。
+                <strong>七、第三方服务。</strong>本页面可能集成 Cloudflare（安全防护与 CDN）、Cloudflare Insights（访问统计）等第三方服务。这些服务会按照其各自的隐私政策独立收集与处理数据。我们无法控制第三方的数据处理行为，建议您查阅其官方隐私政策。
               </li>
 
               <li class="age-item">
-                <strong>八、数据保留与跨境。</strong>服务器日志通常保留不超过 30 天，安全事件记录可能保留更长时间。使用 Cloudflare 等服务时，数据可能被传输至您所在国家/地区以外的服务器进行处理，您继续使用即表示知悉并同意该跨境传输。
+                <strong>八、数据使用与共享。</strong>我们<strong>不会将您的个人信息出售、出租或交易给任何第三方</strong>。收集的数据仅用于：网站安全防护、反自动化攻击、访问统计、故障诊断、法律合规。除法律法规要求或司法/行政机关依法定程序调取外，不对外提供。
               </li>
 
               <li class="age-item">
-                <strong>九、您的权利。</strong>依据 GDPR、CCPA 等适用法律，您可能享有访问、更正、删除、限制处理、反对处理、数据可携等权利。如需行使，请通过页脚提供的联系方式与我们联系。您也有权随时关闭页面并停止使用本服务。
+                <strong>九、数据保留与跨境。</strong>服务器日志通常保留不超过 30 天，安全事件记录可能保留更长时间。使用 Cloudflare 等服务时，数据可能被传输至您所在国家/地区以外的服务器进行处理，您继续使用即表示知悉并同意该跨境传输。
               </li>
 
               <li class="age-item">
-                <strong>十、儿童与未成年人。</strong>本页面<strong>不面向 18 周岁以下未成年人</strong>。我们不会主动收集未成年人的个人信息。若您未满 18 周岁，请立即关闭本页。若监护人发现未成年人误入，请联系我们删除相关数据。
+                <strong>十、您的权利。</strong>依据 GDPR、CCPA 等适用法律，您可能享有访问、更正、删除、限制处理、反对处理、数据可携等权利。如需行使，请通过页脚提供的联系方式与我们联系。您也有权随时关闭页面并停止使用本服务。
               </li>
 
               <li class="age-item">
-                <strong>十一、内容与免责声明。</strong>本页面可能包含突发巨响、闪烁画面、惊吓内容等，可能引起心悸、眩晕、焦虑或其他不适。患有心脏病、癫痫、焦虑症、光敏性疾病或对强光/巨响敏感者，<strong>请立即关闭本页</strong>。继续访问即表示您自愿承担由此产生的任何生理或心理不适，本站不承担任何直接或间接责任。
+                <strong>十一、未成年人保护。</strong>本页面<strong>不面向 18 周岁以下未成年人</strong>，我们不会主动收集未成年人的个人信息。若您未满 18 周岁，请立即关闭本页。若监护人发现未成年人误入，请联系我们删除相关数据。
               </li>
 
               <li class="age-item">
-                <strong>十二、安全措施。</strong>我们采取合理的技术与管理措施保护数据安全，包括传输加密（HTTPS）、访问控制、日志审计等。但请注意，<strong>任何互联网传输与存储方式均无法保证 100% 安全</strong>，我们无法对绝对安全性作出承诺。
+                <strong>十二、免责声明。</strong>本站内容仅供成年人个人浏览，用户应自行判断其所在国家/地区对相关内容的合法性。因用户自身行为、网络环境、设备状况导致的一切后果，本站不承担任何直接或间接责任。<strong>继续访问即表示您自愿承担由此产生的全部责任。</strong>
               </li>
 
               <li class="age-item">
-                <strong>十三、政策更新。</strong>本隐私声明可能不定期更新，更新后的版本将在本页面公布并即时生效，恕不另行单独通知。建议您定期查阅。继续使用即视为接受更新后的条款。
+                <strong>十三、安全措施。</strong>我们采取合理的技术与管理措施保护数据安全，包括传输加密（HTTPS）、访问控制、日志审计等。但请注意，<strong>任何互联网传输与存储方式均无法保证 100% 安全</strong>，我们无法对绝对安全性作出承诺。
               </li>
 
               <li class="age-item">
-                <strong>十四、联系我们。</strong>如对本隐私政策有任何疑问、投诉或数据权利请求，请通过页面底部的「隐私」「条款」链接或网站管理员的公开联系方式与我们取得联系。
+                <strong>十四、政策更新。</strong>本隐私声明可能不定期更新，更新后的版本将在本页面公布并即时生效，恕不另行单独通知。建议您定期查阅。继续使用即视为接受更新后的条款。
+              </li>
+
+              <li class="age-item">
+                <strong>十五、联系我们。</strong>如对本隐私政策有任何疑问、投诉或数据权利请求，请通过页面底部的「隐私」「条款」链接或网站管理员的公开联系方式与我们取得联系。
               </li>
 
             </ul>
@@ -647,7 +678,7 @@
               </svg>
             </span>
             <span class="age-consent-text">
-              我已年满 18 周岁，已阅读并同意上述<strong>隐私政策、用户协议与免责声明</strong>
+              我已年满 18 周岁，自愿访问成人内容，并同意上述<strong>隐私政策、用户协议与免责声明</strong>
             </span>
           </label>
         </div>
@@ -1006,7 +1037,7 @@
     <script>
         (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2ccf3844813f6b1',t:'MTc4NzAxNDUwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
     </script>
-    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"2a21a10966934bffa8f7d79e6224a6f7","r":1}' crossorigin="anonymous"></script>
+    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version": "2024.11.0","token":"2a21a10966934bffa8f7d79e6224a6f7","r":1}' crossorigin="anonymous"></script>
 
     <!-- 附加功能 -->
     <script src="kali.js"></script>
